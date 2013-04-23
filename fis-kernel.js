@@ -50,44 +50,50 @@ Function.prototype.factory = function(){
     };
 };
 
+var fis = module.exports = {};
+
+//register global variable
+Object.defineProperty(global, 'fis', {
+    enumerable : true,
+    writable : false,
+    value : fis
+});
+
 //EventEmitter
-exports.EventEmitter = require('events').EventEmitter;
+fis.EventEmitter = require('events').EventEmitter;
 
 //log
-exports.log = require('./lib/log.js');
+fis.log = require('./lib/log.js');
 
 //require
-exports.require = require('./lib/require.js');
+fis.require = require('./lib/require.js');
 
 //system config
-exports.config = require('./lib/config.js');
+fis.config = require('./lib/config.js');
 
 //utils
-exports.util = require('./lib/util.js');
+fis.util = require('./lib/util.js');
 
 //resource location
-exports.uri = require('./lib/uri.js');
+fis.uri = require('./lib/uri.js');
 
 //project
-exports.project = require('./lib/project.js');
+fis.project = require('./lib/project.js');
 
 //file
-exports.file = require('./lib/file.js');
+fis.file = require('./lib/file.js');
 
 //cache
-exports.cache = require('./lib/cache.js');
+fis.cache = require('./lib/cache.js');
 
 //compile kernel
-exports.compile = require('./lib/compile.js');
+fis.compile = require('./lib/compile.js');
 
 //release api
-exports.release = require('./lib/release.js');
+fis.release = require('./lib/release.js');
 
 //package info
-exports.info = exports.util.readJSON(__dirname + '/package.json');
+fis.info = fis.util.readJSON(__dirname + '/package.json');
 
 //kernel version
-exports.version = exports.info.version;
-
-
-//test sth.
+fis.version = fis.info.version;
