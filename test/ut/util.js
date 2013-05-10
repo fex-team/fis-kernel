@@ -612,15 +612,15 @@ describe('_.write()', function () {
 
 describe('_.isUtf8', function () {
     it('gbk', function () {
-        var bytes =  buf2arr(fs.readFileSync('./test/ut/util/encoding/gbk.txt'));
+        var bytes =  buf2arr(fs.readFileSync('./util/encoding/gbk.txt'));
         expect(_.isUtf8(bytes)).to.be.false;
     });
     it('utf8', function () {
-        var bytes =  buf2arr(fs.readFileSync('./test/ut/util/encoding/utf8.txt'));
+        var bytes =  buf2arr(fs.readFileSync('./util/encoding/utf8.txt'));
         expect(_.isUtf8(bytes)).to.be.true;
     });
     it('utf8-bom', function () {
-        var bytes =  buf2arr(fs.readFileSync('./test/ut/util/encoding/utf8-bom.txt'));
+        var bytes =  buf2arr(fs.readFileSync('./util/encoding/utf8-bom.txt'));
         expect(_.isUtf8(bytes)).to.be.true;
     });
 });
