@@ -385,6 +385,9 @@ describe('_.touch(path, mtime)', function () {
             file = __filename + '.tmp',
             timeNum = Math.floor(time.getTime() / 1000) * 1000 - 1000;
         time.setTime(time.getTime() - 1000);
+        if(fs.existsSync(file)){
+            fs.unlinkSync(file);
+        }
         expect(_.exists(file)).to.be.false;
         _.touch(file, time);
         expect(_.exists(file)).to.be.true;
@@ -610,17 +613,486 @@ describe('_.write()', function () {
 });
 
 
+describe('_.filter(str, [include], [exclude])',function(){
+    it('1 param',function(){
+        expect(_.filter('hello')).to.be.true;
+    });
+    it('include',function(){
+        expect(_.filter('hello','llo')).to.be.true;
+        expect(_.filter('hello','llo1')).to.be.false;
+    });
+    it('exclude',function(){
+        expect(_.filter('hello',null,'llo')).to.be.false;
+        expect(_.filter('hello',null,'llo1')).to.be.true;
+    });
+    it('exclude&include',function(){
+        expect(_.filter('hello','he','llo')).to.be.false;
+        expect(_.filter('hello','he1','llo')).to.be.false;
+        expect(_.filter('hello','he','llo1')).to.be.false;//???以he结尾/he$/??? todo
+        expect(_.filter('hello','llo','llo1')).to.be.true;
+    });
+});
+
+describe('_find(rPath, [include], [exclude])',function(){
+//    it('invalid path',function(){
+//        try{
+//            _.find('./invalidPath')
+//        }catch(e){
+//            expect(1).to.equal(1);
+//        }
+//
+//    });
+    it('normal',function(){
+        var imgs = _.find(__dirname+'/util/img');
+        for(var i=0;i<imgs.length;i++){
+            imgs[i] = path.normalize(imgs[i]);
+        }
+        expect(imgs).to.deep.equal(
+            [
+                path.normalize(__dirname+'/util/img/data.png'),
+                path.normalize(__dirname+'/util/img/test.png')
+            ].sort()
+        );
+    });
+
+    it('empty dir',function(){
+        var imgs = _.find(__dirname+'/util/emptyDir');
+        expect(imgs.length).to.equal(0);
+    });
+    it('file path',function(){
+        var img = _.find(__dirname+'/util/img/data.png');
+        img = path.normalize(img);
+        expect(img).to.equal(path.normalize(__dirname+'/util/img/data.png'));
+    });
+    it('include',function(){
+        var file = _.find(__dirname+'/util/base64/','gif');
+        file = path.normalize(file);
+        expect(file).to.equal(path.normalize(__dirname+'/util/base64/logo.gif'));
+
+        var file = _.find(__dirname+'/util/base64/','xsl');
+        expect(file).to.deep.equal([]);
+    });
+
+    //include和exclude都是通配符，如**.js，所以转化为正则以后应该是/js$/这种样子的，所以就不考虑exclude和include同时存在的情况了，太无聊了
+    it('exclude',function(){
+        var file = _.find(__dirname+'/util/base64/',null,'*.gif');
+        file = path.normalize(file);
+        expect(file).to.equal(path.normalize(__dirname+'/util/base64/logo.txt'));
+
+        var imgs = _.find(__dirname+'/util/img/',null,'gif');
+        for(var i=0;i<imgs.length;i++){
+            imgs[i] = path.normalize(imgs[i]);
+        }
+        expect(imgs).to.deep.equal(
+            [
+                path.normalize(__dirname+'/util/img/data.png'),
+                path.normalize(__dirname+'/util/img/test.png')
+            ].sort()
+        );
+    });
+
+});
+
+describe('_.del(rPath, include, exclude)',function(){
+    it('remove file',function(){
+        var tmpdir = __dirname+"/tmp/tmp2";
+        _.mkdir(tmpdir);
+        fs.writeFileSync(tmpdir+'/a.txt','hello world');
+        expect(_.isDir(tmpdir)).to.be.true;
+        expect(_.del(__dirname+"/tmp")).to.be.true;
+        expect(_.isDir(tmpdir)).to.be.false;
+    });
+
+    it('remove folder',function(){
+        var tmpdir = __dirname+"/tmp/tmp2";
+        _.mkdir(tmpdir);
+        expect(_.isDir(tmpdir)).to.be.true;
+        _.del(__dirname+"/tmp/");
+        expect(_.isDir(__dirname+"/tmp/")).to.be.false;
+    });
+
+    it('include',function(){
+        var tmpdir = __dirname+"/tmp/tmp2";
+        _.mkdir(tmpdir);
+        fs.writeFileSync(tmpdir+'/a.js','hello world');
+        fs.writeFileSync( __dirname+"/tmp/a.txt",'hello world');
+        fs.writeFileSync(__dirname+"/tmp/b.js",'hello world');
+        expect(_.isDir(tmpdir)).to.be.true;
+        _.del(__dirname+"/tmp/",'js');
+        expect(fs.existsSync(__dirname+"/tmp/a.txt")).to.be.true;
+        expect(fs.existsSync(__dirname+"/tmp/tmp2/a.js")).to.be.false;
+        expect(fs.existsSync(__dirname+"/tmp/b.js")).to.be.false;
+        _.del(__dirname+"/tmp/");
+        expect(_.isDir(__dirname+"/tmp/")).to.be.false;
+    });
+
+    it('exclude',function(){
+        var tmpdir = __dirname+"/tmp/tmp2";
+        _.mkdir(tmpdir);
+        fs.writeFileSync(tmpdir+'/a.js','hello world');
+        fs.writeFileSync( __dirname+"/tmp/a.txt",'hello world');
+        fs.writeFileSync(__dirname+"/tmp/b.js",'hello world');
+        expect(_.isDir(tmpdir)).to.be.true;
+        _.del(__dirname+"/tmp/",null,'js');
+        expect(fs.existsSync(__dirname+"/tmp/a.txt")).to.be.false;
+        expect(fs.existsSync(__dirname+"/tmp/tmp2/a.js")).to.be.true;
+        expect(fs.existsSync(__dirname+"/tmp/b.js")).to.be.true;
+        _.del(__dirname+"/tmp/");
+        expect(_.isDir(__dirname+"/tmp/")).to.be.false;
+    });
+
+});
+
+describe('_.copy(rSource, target, include, exclude, uncover, move)',function(){
+    it('general',function(){
+        var source = __dirname+'/copy/dir1';
+        var target = __dirname+'/copy/dir2';
+        _.mkdir(source);
+        _.mkdir(target);
+        fs.writeFileSync(source+'/index.js','hello world');
+        fs.writeFileSync( source+"/file.js",'hello world');
+        fs.writeFileSync(target+"/index.js",'hello world2');
+        _.copy(source,target);
+        expect(fs.existsSync(target+"/file.js")).to.be.true;
+        expect(fs.existsSync(target+"/index.js")).to.be.true;
+        _.del(target);
+        _.del(source);
+    });
+    it('move',function(){
+        var source = __dirname+'/copy/dir1';
+        var target = __dirname+'/copy/dir2';
+        _.mkdir(source);
+        _.mkdir(target);
+        fs.writeFileSync(source+'/index.js','hello world');
+        fs.writeFileSync( source+"/file.js",'hello world');
+        fs.writeFileSync(target+"/index.js",'hello world2');
+        _.copy(source,target,null,null,null,true);
+        expect(fs.existsSync(target+"/file.js")).to.be.true;
+        expect(fs.existsSync(target+"/index.js")).to.be.true;
+        expect(fs.existsSync(source+"/index.js")).to.be.false;
+        expect(fs.existsSync(source+"/file.js")).to.be.false;
+        _.del(target);
+        _.del(source);
+    });
+    it('include',function(){
+        var source = __dirname+'/copy/dir1';
+        var target = __dirname+'/copy/dir2';
+        _.mkdir(source);
+        _.mkdir(target);
+        fs.writeFileSync(source+'/index.js','hello world');
+        fs.writeFileSync( source+"/file.txt",'hello world');
+        fs.writeFileSync(target+"/index1.js",'hello world2');
+        _.copy(source,target,'txt',null,null,true);
+        expect(fs.existsSync(target+"/file.txt")).to.be.true;
+        expect(fs.existsSync(target+"/index1.js")).to.be.true;
+        expect(fs.existsSync(target+"/index.js")).to.be.false;
+        _.del(target);
+        _.del(source);
+    });
+    it('exclude',function(){
+        var source = __dirname+'/copy/dir1';
+        var target = __dirname+'/copy/dir2';
+        _.mkdir(source);
+        _.mkdir(target);
+        fs.writeFileSync(source+'/index.js','hello world');
+        fs.writeFileSync( source+"/file.txt",'hello world');
+        fs.writeFileSync(target+"/index1.js",'hello world2');
+        _.copy(source,target,null,'txt',null,true);
+        expect(fs.existsSync(target+"/file.txt")).to.be.false;
+        expect(fs.existsSync(target+"/index1.js")).to.be.true;
+        expect(fs.existsSync(target+"/index.js")).to.be.true;
+        expect(fs.existsSync(source+"/index.js")).to.be.false;
+        _.del(target);
+        _.del(source);
+    });
+    //同名不覆盖，且源文件不删除
+    it('uncover&&move',function(){
+        var source = __dirname+'/copy/dir1';
+        var target = __dirname+'/copy/dir2';
+        _.mkdir(source);
+        _.mkdir(target);
+        fs.writeFileSync(source+'/index.js','hello world');
+        fs.writeFileSync(source+"/file.js",'hello world');
+        fs.writeFileSync(target+"/index.js",'hello world2');
+        _.copy(source,target,null,null,true,true);
+        expect(fs.existsSync(target+"/file.js")).to.be.true;
+        expect(fs.existsSync(target+"/index.js")).to.be.true;
+        expect(fs.existsSync(source+"/index.js")).to.be.true;
+        _.del(target);
+        _.del(source);
+    });
+});
+
+//后缀相关的信息
+describe('_ext(str)',function(){
+    it('general',function(){
+        expect(_.ext(__filename).ext).to.equal('.js');
+        expect(_.ext(__filename).filename).to.equal('util');
+        expect(_.ext(__filename).basename).to.equal('util.js');
+        expect(_.ext(__filename).dirname).to.equal(_(__dirname));
+        expect(_.ext(__filename).rest).to.equal(_(__dirname)+'/util');
+    });
+
+    it('no /',function(){
+        expect(_.ext('a.js').ext).to.equal('.js');
+        expect(_.ext('a.js').filename).to.equal('a');
+        expect(_.ext('a.js').basename).to.equal('a.js');
+        expect(_.ext('a.js').dirname).to.equal('');
+        expect(_.ext('a.js').rest).to.equal('a');
+    });
+
+    it('no .',function(){
+        expect(_.ext('a').ext).to.equal('');
+        expect(_.ext('a').filename).to.equal('a');
+        expect(_.ext('a').basename).to.equal('a');
+        expect(_.ext('a').dirname).to.equal('');
+        expect(_.ext('a').rest).to.equal('a');
+    });
+
+});
+//get请求中的query
+describe('_query(str)',function(){
+    it('general',function(){
+        var q = _.query('http://www.baidu.com?type=q&q=2');
+        expect(q.origin,'http://www.baidu.com?type=q&q=2');
+        expect(q.query,'?type=q&q=2');
+        expect(q.rest,'http://www.baidu.com');
+    });
+
+    it('no ?',function(){
+        var q = _.query('http://www.baidu.com');
+        expect(q.origin,'http://www.baidu.com');
+        expect(q.query,'');
+        expect(q.rest,'http://www.baidu.com');
+    });
+
+});
+
+describe('_pathinfo(path)',function(){
+    it('array',function(){
+        var p = _.pathinfo('a','a.js');
+        expect(p.ext).to.equal('.js');
+        expect(p.filename).to.equal('a');
+        expect(p.basename).to.equal('a.js');
+        expect(p.dirname).to.equal('a');
+        expect(p.rest).to.equal('a/a');
+    });
+    it('object',function(){
+        var p = _.pathinfo(['a','a.js']);
+        expect(p.ext).to.equal('.js');
+        expect(p.filename).to.equal('a');
+        expect(p.basename).to.equal('a.js');
+        expect(p.dirname).to.equal('a');
+        expect(p.rest).to.equal('a/a');
+    });
+    it('string',function(){
+        var p = _.pathinfo('a/a.js');
+        expect(p.ext).to.equal('.js');
+        expect(p.filename).to.equal('a');
+        expect(p.basename).to.equal('a.js');
+        expect(p.dirname).to.equal('a');
+        expect(p.rest).to.equal('a/a');
+
+    });
+
+});
+
+describe('_camelcase(str)',function(){
+    it('general',function(){
+        var str = 'str_replace.js';
+        expect(_.camelcase(str)).to.equal('StrReplace.js');
+        str = 'str-replace.js';
+        expect(_.camelcase(str)).to.equal('StrReplace.js');
+        str = 'strreplace.js';
+        expect(_.camelcase(str)).to.equal('Strreplace.js');
+    });
+
+});
+
+describe('_parseUrl(url, opt)',function(){
+    it('general',function(){
+        var url = 'http://localhost:8080/fis/test';
+        var res = _.parseUrl(url);
+        expect(res).to.deep.equal(
+            {
+                host:'localhost',
+                port:'8080',
+                path:'/fis/test',
+                method:'GET',
+                agent:false
+            }
+        );
+
+        url = 'https://www.google.com?q=hello';
+        var res = _.parseUrl(url);
+        expect(res).to.deep.equal(
+            {
+                host:'www.google.com',
+                port:'80',
+                path:'',
+                method:'GET',
+                agent:false
+            }
+        );
+    });
+    it('opt',function(){
+        url = 'https://www.google.com?q=hello';
+        var res = _.parseUrl(url,{
+            'path':'/fis/client',
+            'port':8888,
+            'method':'POST',
+            'agent':'chrme'
+        });
+        expect(res).to.deep.equal(
+            {
+                'path':'/fis/client',
+                'port':8888,
+                'method':'POST',
+                'host':'www.google.com',
+                'agent':'chrme'
+            }
+        );
+    });
+});
+
+
+describe('_upload(url, opt, data, file, callback)',function(){
+
+});
+
+
+describe('_download(url, callback, extract, opt)',function(){
+
+});
+
+describe('_.readJSON(path)',function(){
+    it('general-readJson',function(){
+        var path = _(__dirname)+"/json/json.json";
+        var res = _.readJSON(path);
+        expect(res).to.deep.equal({
+            "a":"test1",
+            "b":"test2",
+            "arr":{
+                "arr1":"1"
+            }
+        });
+    });
+
+    it('general-readJson',function(){
+        var path = _(__dirname)+"/util/json/json.json";
+        var res = _.readJSON(path);
+        expect(res).to.deep.equal({
+            "a":"test1",
+            "b":"test2",
+            "arr":{
+                "arr1":"1"
+            }
+        });
+    });
+    it('gbk',function(){
+        var path = _(__dirname)+"/util/json/gbk.json";
+        var res = _.readJSON(path);
+        expect(res).to.deep.equal({
+            "你好" : "中文",
+            "string" : "hello world",
+            "boolean" : true,
+            "number" : 123,
+            "null" : null,
+            "array" : ["中文", "hello world", true, 123, null],
+            "object" : {
+                "你好" : "中文",
+                "string" : "hello world",
+                "boolean" : true,
+                "number" : 123,
+                "null" : null,
+                "array" : ["中文", "hello world", true, 123, null],
+                "object" : {
+                    "你好" : "中文",
+                    "string" : "hello world",
+                    "boolean" : true,
+                    "number" : 123,
+                    "null" : null,
+                    "array" : ["中文", "hello world", true, 123, null]
+                }
+            }
+        });
+    });
+    it('utf8',function(){
+        var path = _(__dirname)+"/util/json/utf8.json";
+        var res = _.readJSON(path);
+        expect(res).to.deep.equal({
+            "你好" : "中文",
+            "string" : "hello world",
+            "boolean" : true,
+            "number" : 123,
+            "null" : null,
+            "©" : "€",
+            "array" : ["中文", "hello world", true, 123, null, "©", "€"],
+            "object" : {
+                "你好" : "中文",
+                "string" : "hello world",
+                "boolean" : true,
+                "number" : 123,
+                "null" : null,
+                "©" : "€",
+                "array" : ["中文", "hello world", true, 123, null, "©", "€"],
+                "object" : {
+                    "你好" : "中文",
+                    "string" : "hello world",
+                    "boolean" : true,
+                    "number" : 123,
+                    "null" : null,
+                    "©" : "€",
+                    "array" : ["中文", "hello world", true, 123, null, "©", "€"]
+                }
+            }
+        });
+
+        var path = _(__dirname)+"/util/json/utf8-bom.json";
+        var res = _.readJSON(path);
+        expect(res).to.deep.equal({
+            "你好" : "中文",
+            "string" : "hello world",
+            "boolean" : true,
+            "number" : 123,
+            "null" : null,
+            "©" : "€",
+            "array" : ["中文", "hello world", true, 123, null, "©", "€"],
+            "object" : {
+                "你好" : "中文",
+                "string" : "hello world",
+                "boolean" : true,
+                "number" : 123,
+                "null" : null,
+                "©" : "€",
+                "array" : ["中文", "hello world", true, 123, null, "©", "€"],
+                "object" : {
+                    "你好" : "中文",
+                    "string" : "hello world",
+                    "boolean" : true,
+                    "number" : 123,
+                    "null" : null,
+                    "©" : "€",
+                    "array" : ["中文", "hello world", true, 123, null, "©", "€"]
+                }
+            }
+        });
+    });
+
+});
+
+
 describe('_.isUtf8', function () {
     it('gbk', function () {
-        var bytes =  buf2arr(fs.readFileSync('./util/encoding/gbk.txt'));
+        var bytes =  buf2arr(fs.readFileSync(__dirname+'/util/encoding/gbk.txt'));
         expect(_.isUtf8(bytes)).to.be.false;
     });
     it('utf8', function () {
-        var bytes =  buf2arr(fs.readFileSync('./util/encoding/utf8.txt'));
+        var bytes =  buf2arr(fs.readFileSync(__dirname+'/util/encoding/utf8.txt'));
         expect(_.isUtf8(bytes)).to.be.true;
     });
     it('utf8-bom', function () {
-        var bytes =  buf2arr(fs.readFileSync('./util/encoding/utf8-bom.txt'));
+        var bytes =  buf2arr(fs.readFileSync(__dirname+'/util/encoding/utf8-bom.txt'));
         expect(_.isUtf8(bytes)).to.be.true;
     });
 });
