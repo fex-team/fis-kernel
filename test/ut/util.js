@@ -928,8 +928,8 @@ describe('_parseUrl(url, opt)',function(){
         expect(res).to.deep.equal(
             {
                 host:'www.google.com',
-                port:'80',
-                path:'',
+                port:443,
+                path:'/?q=hello',
                 method:'GET',
                 agent:false
             }
@@ -967,7 +967,7 @@ describe('_download(url, callback, extract, opt)',function(){
 
 describe('_.readJSON(path)',function(){
     it('general-readJson',function(){
-        var path = _(__dirname)+"/json/json.json";
+        var path = _(__dirname)+"/util/json/json.json";
         var res = _.readJSON(path);
         expect(res).to.deep.equal({
             "a":"test1",
