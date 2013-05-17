@@ -338,9 +338,9 @@ describe('getHashRelease',function(){
 });
 
 describe('addRequire(id)',function(){
+    var path = __dirname+'/file/ext/modular/js.js';
     it('general',function(){
        //第一次加
-        var path = __dirname+'/file/ext/modular/js.js';
         var f = _.wrap(path);
         f.addRequire(__dirname+'/file/css/test.css');
         expect(f.requires).to.deep.equal([
@@ -359,7 +359,6 @@ describe('addRequire(id)',function(){
     });
     it('general',function(){
         //第一次加
-        var path = __dirname+'/file/ext/modular/js.js';
         var f = _.wrap(path);
         f.addRequire(__dirname+'/file/css/test.css');
         expect(f.requires).to.deep.equal([
@@ -378,7 +377,6 @@ describe('addRequire(id)',function(){
     });
     it('id is empty',function(){
         //第一次加
-        var path = __dirname+'/file/ext/modular/js.js';
         var f = _.wrap(path);
         expect(f.addRequire('  ')).to.be.false;
         expect(f.requires).to.deep.equal([]);
@@ -416,7 +414,7 @@ describe('addSameNameRequire(ext)',function(){
         ]);
     });
 
-    it('general',function(){
+    it('roadmap',function(){
         fis.config.set('roadmap.ext',{
             'less':'css'
         });
@@ -432,54 +430,50 @@ describe('addSameNameRequire(ext)',function(){
 
 
 describe('deliver(output, md5)',function(){
+    var output =  __dirname+'/file/output';
+    afterEach(function(){
+        u.del(output);
+    });
     it('md5--js',function(){
         //output目录不存在应当自动创建
-        var output =  __dirname+'/file/output';
         var path = __dirname+'/file/ext/modular/js.js';
         var f = _.wrap(path);
         f.deliver(output,1);
         expect(fs.existsSync(output+'/file/ext/modular/js_'+ f.getHash()+'.js')).to.be.true;
         expect(fs.existsSync(output+'/file/ext/modular/js.js')).to.be.false;
-
-        u.del(output);
     });
 
     it('md5--txt',function(){
-        var output =  __dirname+'/file/output';
         //txt的文件默认不加hash
         path = __dirname+'/util/base64/logo.txt';
         f = _.wrap(path);
         f.deliver(output,1);
         expect(fs.existsSync(output+'/util/base64/logo_'+ f.getHash()+'.txt')).to.be.false;
         expect(fs.existsSync(output+'/util/base64/logo.txt')).to.be.true;
-        u.del(output);
     });
     it('no md5',function(){
         //output目录不存在
-        var output =  __dirname+'/file/output';
         var path = __dirname+'/file/ext/modular/js.js';
         var f = _.wrap(path);
+        f.getContent();
         f.deliver(output,0);
         expect(fs.existsSync(output+'/file/ext/modular/js_'+ f.getHash()+'.js')).to.be.false;
         expect(fs.existsSync(output+'/file/ext/modular/js.js')).to.be.true;
         var newhash = u.md5(u.read(output+'/file/ext/modular/js.js'));
         expect(f.getHash()).to.equal(newhash);
-        u.del(output);
     });
     it('md5&no md5',function(){
         //output目录不存在
-        var output =  __dirname+'/file/output';
         var path = __dirname+'/file/css/test.css';
         var f = _.wrap(path);
+        f.getContent();
         f.deliver(output,2);
         expect(fs.existsSync(output+'/file/css/test_'+ f.getHash()+'.css')).to.be.true;
         expect(fs.existsSync(output+'/file/css/test.css')).to.be.true;
-        u.del(output);
     });
 
     it('deliver 2 times and change contents of the file',function(){
         //output目录不存在
-        var output =  __dirname+'/file/output';
         var path = __dirname+'/file/css/test.css';
         u.write(path,'wawawa');
         var f = _.wrap(path);
@@ -517,6 +511,5 @@ describe('deliver(output, md5)',function(){
             u(__dirname)+"/file/output/file/css/test.css",
             u(__dirname)+"/file/output/file/css/test_"+newhash+".css"
         ]);
-        u.del(output);
     });
 });

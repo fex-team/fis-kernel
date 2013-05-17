@@ -333,7 +333,17 @@ describe('_.realpathSafe(path)', function () {
 });
 
 describe('_.isAbsolute(path)', function () {
-    //todo
+    it('general',function(){
+       if(_.isWin()){
+           expect(_.isAbsolute('d:/work/hello')).to.be.true;
+           expect(_.isAbsolute('./work/hello')).to.be.false;
+           expect(_.isAbsolute('work/hello')).to.be.false;
+       }else{
+           expect(_.isAbsolute('/work/hello')).to.be.true;
+           expect(_.isAbsolute('./work/hello')).to.be.false;
+           expect(_.isAbsolute('work/hello')).to.be.false;
+       }
+    });
 });
 
 describe('_.isFile(path)', function () {
@@ -628,7 +638,7 @@ describe('_.filter(str, [include], [exclude])',function(){
     it('exclude&include',function(){
         expect(_.filter('hello','he','llo')).to.be.false;
         expect(_.filter('hello','he1','llo')).to.be.false;
-        expect(_.filter('hello','he','llo1')).to.be.false;//???以he结尾/he$/??? todo
+        expect(_.filter('hello','he','llo1')).to.be.false;//以he结尾/he$/
         expect(_.filter('hello','llo','llo1')).to.be.true;
     });
 });
