@@ -6,5 +6,5 @@
 'use strict';
 
 module.exports = function(content){
-    return content + ';"+++++"';
+    return content + '--module--';
 };
