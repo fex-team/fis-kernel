@@ -5,9 +5,10 @@ var fs = require('fs'),
         .replace(/\/$/, ''),
     _path = __dirname
         .replace(/\\/g, '/')
-        .replace(/\/$/, '');
+        .replace(/\/$/, ''),
+    _testPath = _path+"/release";
 
-var fis = require('../../../fis-kernel.js');
+var fis = require('../../fis-kernel.js');
 var release = fis.release,
     config = fis.config,
     project = fis.project;
@@ -34,25 +35,25 @@ describe('release',function(){
             pack:true
         },files=[],expectFiles;
         expectFiles =
-            [ _path+'/test1/index.css',
-                _path+'/test1/index.js',
-                _path+'/test1/index.tpl',
-                _path+'/test1/npm.png',
-                _path+'/test1/plugin/FISResource.class.php',
-                _path+'/test1/plugin/compiler.body.php',
-                _path+'/test1/plugin/compiler.head.php',
-                _path+'/test1/plugin/compiler.html.php',
-                _path+'/test1/plugin/compiler.require.php',
-                _path+'/test1/plugin/compiler.script.php',
-                _path+'/test1/plugin/compiler.widget.php',
-                _path+'/test1/sea.js',
-                _path+'/test1/widget/comp/comp.js',
-                _path+'/test1/widget/list/list.css',
-                _path+'/test1/widget/list/list.js',
-                _path+'/test1/widget/list/list.tpl' ];
-        fis.project.setProjectRoot(_path+"/test1");
-        conf = _path+"/test1/fis-conf.js";
-        fis.config.merge(fis.util.readJSON(__dirname + '/standard.json'));
+            [ _testPath+'/test1/index.css',
+                _testPath+'/test1/index.js',
+                _testPath+'/test1/index.tpl',
+                _testPath+'/test1/npm.png',
+                _testPath+'/test1/plugin/FISResource.class.php',
+                _testPath+'/test1/plugin/compiler.body.php',
+                _testPath+'/test1/plugin/compiler.head.php',
+                _testPath+'/test1/plugin/compiler.html.php',
+                _testPath+'/test1/plugin/compiler.require.php',
+                _testPath+'/test1/plugin/compiler.script.php',
+                _testPath+'/test1/plugin/compiler.widget.php',
+                _testPath+'/test1/sea.js',
+                _testPath+'/test1/widget/comp/comp.js',
+                _testPath+'/test1/widget/list/list.css',
+                _testPath+'/test1/widget/list/list.js',
+                _testPath+'/test1/widget/list/list.tpl' ];
+        fis.project.setProjectRoot(_testPath+"/test1");
+        conf = _testPath+"/test1/fis-conf.js";
+        fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
 
 
@@ -70,9 +71,9 @@ describe('release',function(){
               * 普通文件 打包文件 map文件内容测试
               * */
 
-            fs.readFile(_path+"/expect1/photo-map.json","utf-8",function(err,data){
+            fs.readFile(_testPath+"/expect1/photo-map.json","utf-8",function(err,data){
                 expect(ret.pkg["/photo-map.json"]._content).to.equal(data);
-                fs.readFile(_path+"/expect1/__p0__.js","utf-8",function(err,data1){
+                fs.readFile(_testPath+"/expect1/__p0__.js","utf-8",function(err,data1){
 //                    expect(ret.pkg["__p0__.js"]._content).to.equal(data1);
                     expect(files).to.deep.equal(expectFiles);
                     done();
@@ -86,9 +87,9 @@ describe('release',function(){
     * 依赖测试
     * */
     it('deps',function(){
-        fis.project.setProjectRoot(_path+"/test2");
-        conf = _path+"/test2/fis-conf.js";
-        fis.config.merge(fis.util.readJSON(__dirname + '/standard.json'));
+        fis.project.setProjectRoot(_testPath+"/test2");
+        conf = _testPath+"/test2/fis-conf.js";
+        fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
         var files = [];
         var opt = {
@@ -129,13 +130,11 @@ describe('release',function(){
         });
     });
 
-    /*
-     * 依赖测试
-     * */
+
     it(' 参数 md5',function(){
-        fis.project.setProjectRoot(_path+"/test2");
-        conf = _path+"/test2/fis-conf.js";
-        fis.config.merge(fis.util.readJSON(__dirname + '/standard.json'));
+        fis.project.setProjectRoot(_testPath+"/test2");
+        conf = _testPath+"/test2/fis-conf.js";
+        fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
         var files = [];
         var opt = {
@@ -161,13 +160,11 @@ describe('release',function(){
         });
     });
 
-   /*
-    * 依赖测试
-    * */
+
     it('domain = true',function(){
-        fis.project.setProjectRoot(_path+"/test2");
-        conf = _path+"/test2/fis-conf.js";
-        fis.config.merge(fis.util.readJSON(__dirname + '/standard.json'));
+        fis.project.setProjectRoot(_testPath+"/test2");
+        conf = _testPath+"/test2/fis-conf.js";
+        fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
         var files = [];
         var opt = {
@@ -194,13 +191,11 @@ describe('release',function(){
     });
 
 
-    /*
-     * 依赖测试
-     * */
+
     it('domain = false',function(){
-        fis.project.setProjectRoot(_path+"/test2");
-        conf = _path+"/test2/fis-conf.js";
-        fis.config.merge(fis.util.readJSON(__dirname + '/standard.json'));
+        fis.project.setProjectRoot(_testPath+"/test2");
+        conf = _testPath+"/test2/fis-conf.js";
+        fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
         var files = [];
         var opt = {
@@ -228,9 +223,9 @@ describe('release',function(){
 
 
     it('beforeEach & afterEach',function(){
-        fis.project.setProjectRoot(_path+"/test2");
-        conf = _path+"/test2/fis-conf.js";
-        fis.config.merge(fis.util.readJSON(__dirname + '/standard.json'));
+        fis.project.setProjectRoot(_testPath+"/test2");
+        conf = _testPath+"/test2/fis-conf.js";
+        fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
         var curFile = "",beforeFiles=[],afterFiles=[];
 
@@ -252,16 +247,15 @@ describe('release',function(){
         release(opt,function(ret){
 
         });
-
         expect(beforeFiles).to.deep.equal(afterFiles);
 
     });
 
 
     it('beforePack & afterPack',function(){
-        fis.project.setProjectRoot(_path+"/test3");
-        conf = _path+"/test3/fis-conf.js";
-        fis.config.merge(fis.util.readJSON(__dirname + '/standard.json'));
+        fis.project.setProjectRoot(_testPath+"/test3");
+        conf = _testPath+"/test3/fis-conf.js";
+        fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
         var files = [];
         var opt = {
@@ -269,8 +263,8 @@ describe('release',function(){
                 expect(ret.pkg).to.deep.equal({});
             },
             afterPack:function(ret){
-                expect("__p0__.js" in ret.pkg).to.deep.equal(true);
-                expect("__p1__.js" in ret.pkg).to.deep.equal(true);
+                expect("__p0__.js" in ret.pkg).to.equal(true);
+                expect("__p1__.js" in ret.pkg).to.equal(true);
             },
             pack:true
         };

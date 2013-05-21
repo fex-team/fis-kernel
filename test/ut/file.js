@@ -445,8 +445,8 @@ describe('deliver(output, md5)',function(){
 
     it('md5--txt',function(){
         //txt的文件默认不加hash
-        path = __dirname+'/util/base64/logo.txt';
-        f = _.wrap(path);
+        var path = __dirname+'/util/base64/logo.txt';
+        var f = _.wrap(path);
         f.deliver(output,1);
         expect(fs.existsSync(output+'/util/base64/logo_'+ f.getHash()+'.txt')).to.be.false;
         expect(fs.existsSync(output+'/util/base64/logo.txt')).to.be.true;

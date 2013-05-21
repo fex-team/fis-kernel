@@ -229,7 +229,6 @@ describe('_.stringQuote(str, [quotes], [trim])', function () {
             rest: "hello3",
             quote: "\""
         });
-        console.log(_.stringQuote(str3));
         expect(_.stringQuote(str5)).to.deep.equal({
             origin: "\'hello5\'",
             rest: "hello5",
@@ -339,9 +338,9 @@ describe('_.isAbsolute(path)', function () {
            expect(_.isAbsolute('./work/hello')).to.be.false;
            expect(_.isAbsolute('work/hello')).to.be.false;
        }else{
-           expect(_.isAbsolute('/work/hello')).to.be.true;
-           expect(_.isAbsolute('./work/hello')).to.be.false;
-           expect(_.isAbsolute('work/hello')).to.be.false;
+           expect(_.isAbsolute('/home/work/')).to.be.true;
+           expect(_.isAbsolute('./home/work/')).to.be.false;
+           expect(_.isAbsolute('home/work')).to.be.false;
        }
     });
 });
@@ -666,26 +665,33 @@ describe('_find(rPath, [include], [exclude])',function(){
     });
 
     it('empty dir',function(){
+        _.mkdir(__dirname+'/util/emptyDir');
         var imgs = _.find(__dirname+'/util/emptyDir');
         expect(imgs.length).to.equal(0);
     });
     it('file path',function(){
         var img = _.find(__dirname+'/util/img/data.png');
+        expect(img.length).to.equal(1);
+        img = img[0];
         img = path.normalize(img);
         expect(img).to.equal(path.normalize(__dirname+'/util/img/data.png'));
     });
     it('include',function(){
         var file = _.find(__dirname+'/util/base64/','gif');
+        expect(file.length).to.equal(1);
+        file = file[0];
         file = path.normalize(file);
         expect(file).to.equal(path.normalize(__dirname+'/util/base64/logo.gif'));
 
-        var file = _.find(__dirname+'/util/base64/','xsl');
+        file = _.find(__dirname+'/util/base64/','xsl');
         expect(file).to.deep.equal([]);
     });
 
     //include和exclude都是通配符，如**.js，所以转化为正则以后应该是/js$/这种样子的，所以就不考虑exclude和include同时存在的情况了，太无聊了
     it('exclude',function(){
         var file = _.find(__dirname+'/util/base64/',null,'*.gif');
+        expect(file.length).to.equal(1);
+        file = file[0];
         file = path.normalize(file);
         expect(file).to.equal(path.normalize(__dirname+'/util/base64/logo.txt'));
 
@@ -946,7 +952,7 @@ describe('_parseUrl(url, opt)',function(){
         );
     });
     it('opt',function(){
-        url = 'https://www.google.com?q=hello';
+        var url = 'https://www.google.com?q=hello';
         var res = _.parseUrl(url,{
             'path':'/fis/client',
             'port':8888,
