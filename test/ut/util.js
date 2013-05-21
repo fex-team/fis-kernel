@@ -951,7 +951,7 @@ describe('_parseUrl(url, opt)',function(){
         );
     });
     it('opt',function(){
-        url = 'https://www.google.com?q=hello';
+        var url = 'https://www.google.com?q=hello';
         var res = _.parseUrl(url,{
             'path':'/fis/client',
             'port':8888,
