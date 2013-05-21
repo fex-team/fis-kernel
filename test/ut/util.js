@@ -665,6 +665,7 @@ describe('_find(rPath, [include], [exclude])',function(){
     });
 
     it('empty dir',function(){
+        _.mkdir(__dirname+'/util/emptyDir');
         var imgs = _.find(__dirname+'/util/emptyDir');
         expect(imgs.length).to.equal(0);
     });
