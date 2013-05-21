@@ -677,9 +677,9 @@ describe('_find(rPath, [include], [exclude])',function(){
     });
     it('include',function(){
         var file = _.find(__dirname+'/util/base64/','gif');
-        file = path.normalize(file);
         expect(file.length).to.equal(1);
         file = file[0];
+        file = path.normalize(file);
         expect(file).to.equal(path.normalize(__dirname+'/util/base64/logo.gif'));
 
         file = _.find(__dirname+'/util/base64/','xsl');
@@ -689,9 +689,9 @@ describe('_find(rPath, [include], [exclude])',function(){
     //include和exclude都是通配符，如**.js，所以转化为正则以后应该是/js$/这种样子的，所以就不考虑exclude和include同时存在的情况了，太无聊了
     it('exclude',function(){
         var file = _.find(__dirname+'/util/base64/',null,'*.gif');
-        file = path.normalize(file);
         expect(file.length).to.equal(1);
         file = file[0];
+        file = path.normalize(file);
         expect(file).to.equal(path.normalize(__dirname+'/util/base64/logo.txt'));
 
         var imgs = _.find(__dirname+'/util/img/',null,'gif');
