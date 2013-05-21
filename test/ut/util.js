@@ -229,7 +229,6 @@ describe('_.stringQuote(str, [quotes], [trim])', function () {
             rest: "hello3",
             quote: "\""
         });
-        console.log(_.stringQuote(str3));
         expect(_.stringQuote(str5)).to.deep.equal({
             origin: "\'hello5\'",
             rest: "hello5",
@@ -339,9 +338,9 @@ describe('_.isAbsolute(path)', function () {
            expect(_.isAbsolute('./work/hello')).to.be.false;
            expect(_.isAbsolute('work/hello')).to.be.false;
        }else{
-           expect(_.isAbsolute('/work/hello')).to.be.true;
-           expect(_.isAbsolute('./work/hello')).to.be.false;
-           expect(_.isAbsolute('work/hello')).to.be.false;
+           expect(_.isAbsolute('/home/work/')).to.be.true;
+           expect(_.isAbsolute('./home/work/')).to.be.false;
+           expect(_.isAbsolute('home/work')).to.be.false;
        }
     });
 });
@@ -671,15 +670,19 @@ describe('_find(rPath, [include], [exclude])',function(){
     });
     it('file path',function(){
         var img = _.find(__dirname+'/util/img/data.png');
+        expect(img.length).to.equal(1);
+        img = img[0];
         img = path.normalize(img);
         expect(img).to.equal(path.normalize(__dirname+'/util/img/data.png'));
     });
     it('include',function(){
         var file = _.find(__dirname+'/util/base64/','gif');
         file = path.normalize(file);
+        expect(file.length).to.equal(1);
+        file = file[0];
         expect(file).to.equal(path.normalize(__dirname+'/util/base64/logo.gif'));
 
-        var file = _.find(__dirname+'/util/base64/','xsl');
+        file = _.find(__dirname+'/util/base64/','xsl');
         expect(file).to.deep.equal([]);
     });
 
@@ -687,6 +690,8 @@ describe('_find(rPath, [include], [exclude])',function(){
     it('exclude',function(){
         var file = _.find(__dirname+'/util/base64/',null,'*.gif');
         file = path.normalize(file);
+        expect(file.length).to.equal(1);
+        file = file[0];
         expect(file).to.equal(path.normalize(__dirname+'/util/base64/logo.txt'));
 
         var imgs = _.find(__dirname+'/util/img/',null,'gif');
