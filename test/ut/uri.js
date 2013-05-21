@@ -23,7 +23,7 @@ var expect = require('chai').expect;
 
     describe('uri()', function () {
         it('relative path "/"', function () {
-            project.setProjectRoot("E:\\fis\\fis2\\fis-kernel\\test\\ut");
+            project.setProjectRoot(_path);
             expect(uri("uri/file/a.js?a=a","/common")["origin"]).to.equal("uri/file/a.js?a=a");
             expect(uri("uri/file/a.js?a=a","/common")["query"]).to.equal("?a=a");
             expect(uri("uri/file/a.js?a=a","/common")["file"]["fullname"]).to.equal("/common/uri/file/a.js");
@@ -32,35 +32,6 @@ var expect = require('chai').expect;
         it("absolute path",function(){
 
             project.setProjectRoot(_path);
-            var expectResult =
-            {   origin: '/uri/file/a.js?a=a',
-                rest: '/uri/file/a.js',
-                quote: '',
-                query: '?a=a',
-                file:
-                { origin: 'E:/fis/fis2/fis-kernel/test/ut/uri/file/a.js',
-                    rest: 'E:/fis/fis2/fis-kernel/test/ut/uri/file/a',
-                    query: '',
-                    fullname: 'E:/fis/fis2/fis-kernel/test/ut/uri/file/a.js',
-                    dirname: 'E:/fis/fis2/fis-kernel/test/ut/uri/file',
-                    ext: '.js',
-                    filename: 'a',
-                    basename: 'a.js',
-                    rExt: '.js',
-                    realpath: 'E:/fis/fis2/fis-kernel/test/ut/uri/file/a.js',
-                    realpathNoExt: 'E:/fis/fis2/fis-kernel/test/ut/uri/file/a',
-                    useHash: true,
-                    useDomain: true,
-                    isMod: false,
-                    requires: [],
-                    subpath: '/uri/file/a.js',
-                    subdirname: '/uri/file',
-                    subpathNoExt: '/uri/file/a',
-                    release: '/uri/file/a.js',
-                    url: '/uri/file/a.js',
-                    domain: '',
-                    id: 'uri/file/a.js' }
-            };
             expect(uri("/uri/file/a.js?a=a")["query"]).to.equal("?a=a");
             expect(uri("/uri/file/a.js?a=a")["rest"]).to.equal("/uri/file/a.js");
             expect(uri("/uri/file/a.js?a=a")["file"]["realpath"]).to.equal(_path+"/uri/file/a.js");
@@ -70,7 +41,7 @@ var expect = require('chai').expect;
 
     describe('getId()', function () {
         it('relative path "/"', function (){
-            project.setProjectRoot("E:\\fis\\fis2\\fis-kernel\\test\\ut");
+            project.setProjectRoot(_path);
             expect(uri("uri/file/a.js?a=a","/common")["origin"]).to.equal("uri/file/a.js?a=a");
             expect(uri("uri/file/a.js?a=a","/common")["query"]).to.equal("?a=a");
             expect(uri("uri/file/a.js?a=a","/common")["file"]["fullname"]).to.equal("/common/uri/file/a.js");
