@@ -1,7 +1,7 @@
 {
     "name" : "fis-kernel",
     "description" : "fis kernel.",
-    "version" : "1.0.13",
+    "version" : "1.0.14",
     "author" : "FIS Team <fis@baidu.com>",
     "homepage" : "http://fis.baidu.com/",
     "license": "MIT",
