@@ -5,6 +5,8 @@
 
 'use strict';
 
+var last = Date.now();
+
 //oo
 Function.prototype.derive = function(constructor, proto){
     if(typeof constructor === 'object'){
@@ -59,6 +61,12 @@ Object.defineProperty(global, 'fis', {
     value : fis
 });
 
+//time for debug
+fis.time = function(title){
+    console.log(title + ' : ' + (Date.now() - last) + 'ms');
+    last = Date.now();
+};
+
 //EventEmitter
 fis.EventEmitter = require('events').EventEmitter;
 
@@ -66,7 +74,14 @@ fis.EventEmitter = require('events').EventEmitter;
 fis.log = require('./lib/log.js');
 
 //require
-fis.require = require('./lib/require.js');
+fis.require = function(){
+    var name = 'fis-' + Array.prototype.slice.call(arguments, 0).join('-');
+    try {
+        return require(name);
+    } catch(e) {
+        fis.log.error(e);
+    }
+};
 
 //system config
 fis.config = require('./lib/config.js');
