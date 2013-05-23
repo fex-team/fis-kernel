@@ -6,9 +6,6 @@
 
 var fs = require('fs'),
     path = require('path'),
-    ROOT = path.join(__dirname, '../..')
-        .replace(/\\/g, '/')
-        .replace(/\/$/, ''),
     _path = __dirname
         .replace(/\\/g, '/')
         .replace(/\/$/, '');
@@ -17,13 +14,14 @@ var fis = require('../../fis-kernel.js');
 var  uri = fis.uri,
     config = fis.config,
     project = fis.project;
-
 var expect = require('chai').expect;
 
-
     describe('uri()', function () {
-        it('relative path "/"', function () {
+        before(function(){
+            config.init();
             project.setProjectRoot(_path);
+        })
+        it('relative path "/"', function () {
             expect(uri("uri/file/a.js?a=a","/common")["origin"]).to.equal("uri/file/a.js?a=a");
             expect(uri("uri/file/a.js?a=a","/common")["query"]).to.equal("?a=a");
             expect(uri("uri/file/a.js?a=a","/common")["file"]["fullname"]).to.equal("/common/uri/file/a.js");
@@ -31,7 +29,6 @@ var expect = require('chai').expect;
 
         it("absolute path",function(){
 
-            project.setProjectRoot(_path);
             expect(uri("/uri/file/a.js?a=a")["query"]).to.equal("?a=a");
             expect(uri("/uri/file/a.js?a=a")["rest"]).to.equal("/uri/file/a.js");
             expect(uri("/uri/file/a.js?a=a")["file"]["realpath"]).to.equal(_path+"/uri/file/a.js");

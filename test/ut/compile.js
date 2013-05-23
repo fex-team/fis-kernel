@@ -14,7 +14,6 @@ var fis = require('../../fis-kernel.js'),
     file = fis.file,
     expect = require('chai').expect;
 var root = __dirname + '/file';
-fis.project.setProjectRoot(root);
 var compile = fis.compile;
 describe('compile(path, debug)', function () {
     var conf = config.get(),
@@ -26,6 +25,8 @@ describe('compile(path, debug)', function () {
     //lint处理的结果不会写入到文件
     var added = parstr+modstr+optstr;
     before(function(){
+        config.init();
+        fis.project.setProjectRoot(root);
         fis.project.setTempRoot(root+'/target/');
         _.copy(root+'/fis-modular-modular',root+'/../../../node_modules/fis-modular-modular');
         _.copy(root+'/fis-lint-lint',root+'/../../../node_modules/fis-lint-lint');
@@ -50,22 +51,18 @@ describe('compile(path, debug)', function () {
             ext : {
                 'coffee' : 'js'
             },
-            path : [
-                    {
+            path : [{
                         "reg" : "^\/(.*)\\.coffee$",
                         "release" : "/static/$1.js"
                     },
                     {
                         "reg" : "^\/(.*)",
                         "release" : "/static/$1"
-                    }
-                ],
-            url : [
-                {
+                    }],
+            url : [{
                     "reg" : "^\/static\/(.*)$",
                     "path" : "/$1"
-                }
-            ]
+                }]
         });
     });
     after(function(){
