@@ -14,7 +14,6 @@ var fis = require('../../fis-kernel.js'),
     file = fis.file,
     expect = require('chai').expect;
 var root = __dirname + '/file';
-fis.project.setProjectRoot(root);
 var compile = fis.compile;
 describe('compile(path, debug)', function () {
     var conf = config.get(),
@@ -26,48 +25,54 @@ describe('compile(path, debug)', function () {
     //lint处理的结果不会写入到文件
     var added = parstr+modstr+optstr;
     before(function(){
+        config.init();
+        fis.project.setProjectRoot(root);
         fis.project.setTempRoot(root+'/target/');
+        _.copy(root+'/fis-modular-modular',root+'/../../../node_modules/fis-modular-modular');
+        _.copy(root+'/fis-lint-lint',root+'/../../../node_modules/fis-lint-lint');
+        _.copy(root+'/fis-optimizer-optimizer',root+'/../../../node_modules/fis-optimizer-optimizer');
+        _.copy(root+'/fis-parser-parser',root+'/../../../node_modules/fis-parser-parser');
         //设置各个处理器的路径，对应于compile.js，modules.parser.js,module.modular.js
         config.set('modules', {
             parser : {
-                js : '../../../../test/ut/file/ext/parser/js'
+                js : 'parser'
             },
             modular : {
-                js : '../../../../test/ut/file/ext/modular/js'
+                js : 'modular'
             },
             lint :{
-                js :'../../../../test/ut/file/ext/lint/lint'
+                js :'lint'
             },
             optimizer :{
-                js :'../../../../test/ut/file/ext/optimizer/optimizer'
+                js :'optimizer'
             }
         });
         config.set('roadmap', {
             ext : {
                 'coffee' : 'js'
             },
-            path : [
-                    {
+            path : [{
                         "reg" : "^\/(.*)\\.coffee$",
                         "release" : "/static/$1.js"
                     },
                     {
                         "reg" : "^\/(.*)",
                         "release" : "/static/$1"
-                    }
-                ],
-            url : [
-                {
+                    }],
+            url : [{
                     "reg" : "^\/static\/(.*)$",
                     "path" : "/$1"
-                }
-            ]
+                }]
         });
     });
     after(function(){
         //恢复环境
         config.set(conf);
         compile.clean();
+        _.del(root+'/../../../node_modules/fis-modular-modular');
+        _.del(root+'/../../../node_modules/fis-lint-lint');
+        _.del(root+'/../../../node_modules/fis-optimizer-optimizer');
+        _.del(root+'/../../../node_modules/fis-parser-parser');
     });
     beforeEach(function(){
         compile.setup({

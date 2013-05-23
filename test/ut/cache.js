@@ -10,15 +10,15 @@ var fs = require('fs'),
     path = require('path');
 var fis = require('../../fis-kernel.js');
 var project = fis.project;
-project.setProjectRoot(__dirname);
 var  _ = fis.cache,
     config = fis.config;
 var expect = require('chai').expect;
 var root = fis.util(__dirname)+'/fis-tmp';
-project.setTempRoot(root+'/target/');
 
 describe('save(content, info)',function(){
     var targetdir = root+'/target/cache/';
+     project.setProjectRoot(__dirname);
+     project.setTempRoot(root+'/target/');
     afterEach(function(){
        fis.util.del(targetdir);
     });

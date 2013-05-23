@@ -1,8 +1,5 @@
 var fs = require('fs'),
     path = require('path'),
-    ROOT = path.join(__dirname, '../..')
-        .replace(/\\/g, '/')
-        .replace(/\/$/, ''),
     _path = __dirname
         .replace(/\\/g, '/')
         .replace(/\/$/, ''),
@@ -15,9 +12,10 @@ var release = fis.release,
 
 var expect = require('chai').expect;
 
-
-
 describe('release',function(){
+    before(function(){
+        config.init();
+    });
 
     /*
     * 结果打包
@@ -55,7 +53,6 @@ describe('release',function(){
         var conf = _testPath+"/test1/fis-conf.js";
         fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
-
 
         release(opt,function(ret){
             /*
@@ -103,8 +100,6 @@ describe('release',function(){
             },
             pack:true
         };
-
-
         release(opt,function(ret){
             /*
              *  依赖检测
@@ -190,8 +185,6 @@ describe('release',function(){
         });
     });
 
-
-
     it('domain = false',function(){
         fis.project.setProjectRoot(_testPath+"/test2");
         var conf = _testPath+"/test2/fis-conf.js";
@@ -243,12 +236,10 @@ describe('release',function(){
             },
             pack:true
         };
-
         release(opt,function(ret){
 
         });
         expect(beforeFiles).to.deep.equal(afterFiles);
-
     });
 
 

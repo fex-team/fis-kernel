@@ -6,10 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 var fs = require('fs'),
-    path = require('path'),
-    ROOT = path.join(__dirname, '../..')
-        .replace(/\\/g, '/')
-        .replace(/\/$/, '');
+    path = require('path');
 var fis = require('../../fis-kernel.js');
 var  _ = fis.util,
     config = fis.config;
@@ -20,6 +17,9 @@ function buf2arr(buf) {
 }
 
 describe('_.normalize(path1, [path2], [...])', function () {
+    before(function(){
+       config.init();
+    });
 
     it('without argument', function () {
         expect(_.normalize('')).to.equal('');
