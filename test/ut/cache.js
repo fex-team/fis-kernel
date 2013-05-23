@@ -17,10 +17,8 @@ var root = fis.util(__dirname)+'/fis-tmp';
 
 describe('save(content, info)',function(){
     var targetdir = root+'/target/cache/';
-    before(function(){
-        project.setProjectRoot(__dirname);
-        project.setTempRoot(root+'/target/');
-    });
+     project.setProjectRoot(__dirname);
+     project.setTempRoot(root+'/target/');
     afterEach(function(){
        fis.util.del(targetdir);
     });

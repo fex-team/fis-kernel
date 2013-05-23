@@ -12,10 +12,13 @@ var  _ = fis.file,
     config = fis.config;
 var expect = require('chai').expect;
 var u = fis.util;
+fis.project.setProjectRoot(__dirname);
 
 function buf2arr(buf) {
     return Array.prototype.slice.call(buf);
 }
+
+
 
 describe('getContent',function(){
     var f = _.wrap('a.txt');
@@ -25,10 +28,7 @@ describe('setContent',function(){
 
 });
 describe('exists',function(){
-    before(function(){
-        config.init();
-        fis.project.setProjectRoot(__dirname);
-    });
+    fis.project.setProjectRoot(__dirname);
     it('not exist',function(){
         var f = _.wrap('not_exist.txt');
         expect(f.exists()).to.be.false;
