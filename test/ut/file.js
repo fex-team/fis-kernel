@@ -12,7 +12,6 @@ var  _ = fis.file,
     config = fis.config;
 var expect = require('chai').expect;
 var u = fis.util;
-fis.project.setProjectRoot(__dirname);
 
 function buf2arr(buf) {
     return Array.prototype.slice.call(buf);
@@ -28,6 +27,9 @@ describe('setContent',function(){
 
 });
 describe('exists',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     fis.project.setProjectRoot(__dirname);
     it('not exist',function(){
         var f = _.wrap('not_exist.txt');
@@ -40,6 +42,9 @@ describe('exists',function(){
 });
 
 describe('isText',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     it('general',function(){
         var f = _.wrap('');
         expect(f.isText()).to.be.false;
@@ -59,6 +64,9 @@ describe('isText',function(){
 
 });
 describe('isImage',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     it('general',function(){
         var f = _.wrap('');
         expect(f.isImage()).to.be.false;
@@ -79,6 +87,9 @@ describe('isImage',function(){
     });
 });
 describe('toString',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     it('general',function(){
         var f = _.wrap('hello.js/hello.css');
         expect(f.toString()).to.equal('hello.js/hello.css');
@@ -90,6 +101,9 @@ describe('toString',function(){
 });
 
 describe('getMtime',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     it('general',function(){
         var path = __dirname+'/file/a.js';
         var f = _.wrap(path);
@@ -105,6 +119,9 @@ describe('getMtime',function(){
     });
 });
 describe('isFile',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     it('general',function(){
         var path = __dirname+'/file/ext/modular/js.js';
         var f = _.wrap(path);
@@ -124,6 +141,9 @@ describe('isFile',function(){
     });
 });
 describe('isDir',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     it('general',function(){
         var path = __dirname+'/file/ext/modular/';
         var f = _.wrap(path);
@@ -148,6 +168,9 @@ describe('isDir',function(){
 });
 
 describe('getHash',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     it('has no hash',function(){
         var path = __dirname+'/file/ext/modular/js.js';
         var f = _.wrap(path);
@@ -162,6 +185,9 @@ describe('getHash',function(){
     });
 });
 describe('getBase64(prefix)',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     it('prefix',function(){
         var path = __dirname+'/util/base64/logo.gif';
         var f = _.wrap(path);
@@ -185,6 +211,9 @@ describe('getBase64(prefix)',function(){
 
 });
 describe('writeTo(target)',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     it('utf8-utf8',function(){
         //源文件和目标文件都是utf8
         var path = __dirname+'/util/encoding/utf8.txt';
@@ -245,6 +274,9 @@ describe('writeTo(target)',function(){
 });
 
 describe('getId',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     it('general',function(){
         var path = __dirname+'/util/encoding/gbk.txt';
         var f = _.wrap(path);
@@ -253,6 +285,9 @@ describe('getId',function(){
     });
 });
 describe('getUrl(withHash, withDomain)',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     it('general',function(){
         //非js、css、图片文件
         var path = __dirname+'/util/encoding/gbk.txt?__inline';
@@ -309,6 +344,9 @@ describe('getUrl(withHash, withDomain)',function(){
 
 });
 describe('getHashRelease',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     //txt不能release
 //    it('general',function(){
 //        var path = __dirname+'/util/encoding/gbk.txt';
@@ -342,6 +380,9 @@ describe('getHashRelease',function(){
 });
 
 describe('addRequire(id)',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     var path = __dirname+'/file/ext/modular/js.js';
     it('general',function(){
        //第一次加
@@ -388,6 +429,9 @@ describe('addRequire(id)',function(){
 
 });
 describe('removeRequire(id)',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     //第一次加
     var path = __dirname+'/file/ext/modular/js.js';
     var f = _.wrap(path);
@@ -402,6 +446,9 @@ describe('removeRequire(id)',function(){
 
 //在当前目录下寻找同名不同后缀的文件，并作为依赖添加进来
 describe('addSameNameRequire(ext)',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     it('general',function(){
         var path = __dirname+'/file/ext/modular/js.js';
         var f = _.wrap(path);
@@ -434,6 +481,9 @@ describe('addSameNameRequire(ext)',function(){
 
 
 describe('deliver(output, md5)',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
     var output =  __dirname+'/file/output';
     afterEach(function(){
         u.del(output);
