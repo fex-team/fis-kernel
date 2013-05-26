@@ -84,6 +84,7 @@ describe('release',function(){
     * 依赖测试
     * */
     it('deps',function(){
+	    fis.config.del("roadmap.path");
         fis.project.setProjectRoot(_testPath+"/test2");
         var conf = _testPath+"/test2/fis-conf.js";
         fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
