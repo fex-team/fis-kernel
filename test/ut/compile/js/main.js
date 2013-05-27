@@ -1,0 +1,1 @@
+__inline('inline.js');__inline("inline.js");

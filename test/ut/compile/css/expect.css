@@ -1,0 +1,12 @@
+@import url(/css/inline_d6fe2c4.css);
+.test{
+   background: red;
+};
+
+.test{
+    background-image: url(/css/test_bbcd6a7.bmp);
+    background-image: url('/css/test_bbcd6a7.bmp');
+    background-image: url("/css/test_bbcd6a7.bmp");
+    _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/css/test_bbcd6a7.bmp');
+    _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/css/test_bbcd6a7.bmp?__inline');
+}

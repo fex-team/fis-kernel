@@ -1,0 +1,1 @@
+__uri('./inline.js');__uri("./inline.js");

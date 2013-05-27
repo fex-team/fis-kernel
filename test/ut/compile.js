@@ -277,4 +277,97 @@ describe('compile(path, debug)', function () {
         expect(f1.cache.deps).to.deep.equal(exp);
     });
 
+
+    /**
+     * 三种语言能力，require、uri、embed
+     */
+
+    it('inline--js',function(){
+        //清空前面的config参数
+        config.set();
+        var f1 = _(__dirname, 'file/embed.js'),
+            f2 = _(__dirname, '/e.js'),
+            f3 = _(__dirname, 'file/embed/e2.js'),
+            content1 = 'var str = \'\';__inline("../e.js")',
+            content2 = 'var f = "__inline(\'file/css/test.js\')";\n\n__inline(\'file/embed/e2.js\');var f = "__inline(\'file/css/test.js\')"',
+            content3 = 'var a = "__inline(\'c.js\')"';
+        _.write(f1, content1);
+        _.write(f2, content2);
+        _.write(f3, content3);
+        tempfiles.push(f1);
+        tempfiles.push(f2);
+        tempfiles.push(f3);
+
+        f1 = compile(f1);
+        var c = f1.getContent();
+        expect(c).to.equal('var str = \'\';var f = "__inline(\'file/css/test.js\')";\n\nvar a = "__inline(\'c.js\')";var f = "__inline(\'file/css/test.js\')"');
+        f2 = compile(f2);
+        c = f2.getContent();
+        expect(c).to.equal('var f = "__inline(\'file/css/test.js\')";\n\nvar a = "__inline(\'c.js\')";var f = "__inline(\'file/css/test.js\')"');
+    });
+
+    it('uri--js',function(){
+        //清空前面的config参数
+        config.set();
+        var root = __dirname+'/compile/';
+        fis.project.setProjectRoot(root);
+        var f1 = compile(root+'js/uri.js');
+        var c = compile(f1).getContent();
+        expect(c).to.equal("'/js/inline_7725901.js';\"/js/inline_7725901.js\";");
+
+    });
+
+    it('inline,uri--css',function(){
+        //清空前面的config参数
+        config.set();
+        var root = __dirname+'/compile/';
+        fis.project.setProjectRoot(root);
+
+        var f1 = compile(root+'css/main.css');
+        var content = f1.getContent();
+        var expectstr = file.wrap(root+'css/expect.css').getContent();
+        expect(content).to.equal(expectstr);
+    });
+
+    it('inline,uri--html',function(){
+        //清空前面的config参数
+        config.set();
+        var root = __dirname+'/compile/';
+        var root = __dirname+'/compile/';
+        fis.project.setProjectRoot(root);
+
+        var f1 = compile(root+'html/main.html');
+        var content = f1.getContent();
+        var expectstr = file.wrap(root+'html/expect.html').getContent();
+        expect(content).to.equal(expectstr);
+    });
+
+    it('require--js',function(){
+        var root = __dirname+'/compile/';
+        fis.project.setProjectRoot(root);
+
+        var f1 = compile(root+'js/require.js');
+        var content = f1.getContent();
+        var expectstr = file.wrap(root+'js/expect_require.js').getContent();
+        expect(content).to.equal(expectstr);
+    });
+    it('require--css',function(){
+        var root = __dirname+'/compile/';
+        fis.project.setProjectRoot(root);
+
+        var f1 = compile(root+'css/require.css');
+        var content = f1.getContent();
+        var expectstr = file.wrap(root+'css/expect_require.css').getContent();
+        expect(content).to.equal(expectstr);
+    });
+    it('require--html',function(){
+        var root = __dirname+'/compile/';
+        fis.project.setProjectRoot(root);
+
+        var f1 = compile(root+'html/require.html');
+        var content = f1.getContent();
+        var expectstr = file.wrap(root+'html/expect_require.html').getContent();
+        expect(content).to.equal(expectstr);
+    });
+
 });
