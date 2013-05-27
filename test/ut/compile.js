@@ -329,6 +329,22 @@ describe('compile(path, debug)', function () {
         expect(content).to.equal(expectstr);
     });
 
+    //比上面那个case多考虑了一些路径的问题
+    it('inline--css',function(){
+        //清空前面的config参数
+        config.set();
+        var root = __dirname+'/compile/';
+        fis.project.setProjectRoot(root);
+        var f1 = root+'css/c.css',
+            content1 = '@import url(./inline.css?__inline);@import url(../css/inline.css?__inline);@import url(../css/inline.css?__inline);@import url(\'./inline.css?__inline\');@import url("./inline.css?__inline");';
+        _.write(f1, content1);
+        tempfiles.push(f1);
+
+        f1 = compile(f1);
+        var c = f1.getContent();
+        expect(c).to.equal('.test{\r\n   background: red;\r\n};.test{\r\n   background: red;\r\n};.test{\r\n   background: red;\r\n};.test{\r\n   background: red;\r\n};.test{\r\n   background: red;\r\n};')
+    });
+
     it('inline,uri--html',function(){
         //清空前面的config参数
         config.set();
@@ -340,6 +356,16 @@ describe('compile(path, debug)', function () {
         var content = f1.getContent();
         var expectstr = file.wrap(root+'html/expect.html').getContent();
         expect(content).to.equal(expectstr);
+        var count1 = 0;
+        var count2 = 0;
+        for(var key in f1.cache.deps){
+            if(key == _(root+'js/inline.js')||key == _(root+'js/main.js')||key == _(root+'css/inline.css')||key == _(root+'css/test.bmp')||key ==  _(root+'css/main.css')||key == _(root+'html/main.html')||key == _(root+'html/inline.html')||key == _(root+'html/inline2.html')){
+                count1++;
+            }
+            count2++;
+        }
+        expect(count1).to.equal(7);
+        expect(count2).to.equal(7);
     });
 
     it('require--js',function(){
@@ -350,6 +376,7 @@ describe('compile(path, debug)', function () {
         var content = f1.getContent();
         var expectstr = file.wrap(root+'js/expect_require.js').getContent();
         expect(content).to.equal(expectstr);
+        expect(f1.requires).to.deep.equal([ 'js/main.js']);
     });
     it('require--css',function(){
         var root = __dirname+'/compile/';
@@ -359,6 +386,9 @@ describe('compile(path, debug)', function () {
         var content = f1.getContent();
         var expectstr = file.wrap(root+'css/expect_require.css').getContent();
         expect(content).to.equal(expectstr);
+
+        expect(f1.requires).to.deep.equal([ 'css/main.css']);
+
     });
     it('require--html',function(){
         var root = __dirname+'/compile/';
@@ -368,6 +398,8 @@ describe('compile(path, debug)', function () {
         var content = f1.getContent();
         var expectstr = file.wrap(root+'html/expect_require.html').getContent();
         expect(content).to.equal(expectstr);
+
+        expect(f1.requires).to.deep.equal([ 'js/main.js', 'css/main.css', './main.css' ]);
     });
 
 });
