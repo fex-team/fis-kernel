@@ -17,15 +17,16 @@ function buf2arr(buf) {
     return Array.prototype.slice.call(buf);
 }
 
-
-
-describe('getContent',function(){
-    var f = _.wrap('a.txt');
-
-});
-describe('setContent',function(){
-
-});
+//describe('getContent',function(){
+//    beforeEach(function(){
+//        fis.project.setProjectRoot(__dirname);
+//    });
+//    var f = _.wrap('a.txt');
+//
+//});
+//describe('setContent',function(){
+//
+//});
 describe('exists',function(){
     beforeEach(function(){
         fis.project.setProjectRoot(__dirname);
