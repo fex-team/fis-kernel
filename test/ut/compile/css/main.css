@@ -1,0 +1,10 @@
+@import url(./inline.css);
+@import url(./inline.css?__inline);
+
+.test{
+    background-image: url(./test.bmp);
+    background-image: url('./test.bmp');
+    background-image: url("./test.bmp");
+    _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='./test.bmp');
+    _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='./test.bmp?__inline');
+}
