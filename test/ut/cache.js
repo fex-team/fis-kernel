@@ -83,45 +83,41 @@ describe('revert(file)',function(){
     var fp = root+'/src/c1.js';
     it('general',function(){
         fis.util.write(fp,'F.use(\'c2\');');
-        var cache = _(fp,{info:'infos'});
+        var cache = _(fp);
         cache.addDeps(root+'/src/c2.css');
         //缓存中设置c1.js的内容为'hello'
         cache.save('hello');
         var obj = {};
         var res = cache.revert(obj);
         expect(obj.content).to.equal('hello');
-        expect(obj.info,'infos');
         expect(res).to.be.true;
 
     });
-    it('dep mtime is changed',function(){
+    it('file mtime is changed',function(){
         fis.util.write(fp,'F.use(\'c2\');');
-        var cache = _(fp,{info:'infos'});
+        var cache = _(fp);
         cache.addDeps(root+'/src/c2.css');
         //缓存中设置c1.js的内容为'hello'
         cache.save('hello');
 
-        //修改文件的内容,再cache一下，
-        // 这种就可以更新cache中的timestamp，从而与cache.save中存储的timestamp不一致，从而revert返回false，缓存失效
-        fis.util.write(fp,'hahaha');
+        //修改文件的内容,再cache一下，可以更新cache中的timestamp，从而与cache.save中存储的timestamp不一致，从而revert返回false，缓存失效
         var obj = {};
-        fis.util.write(fp,'wwww');
+        fis.util.touch(fp,12345665);
         cache = _(fp);
         var res = cache.revert(obj);
         expect(res).to.be.false;
         expect(obj).to.be.deep.equal({});
     });
 
-    it('file mtime is changed',function(){
+    it('dep mtime is changed',function(){
         fis.util.write(fp,'F.use(\'c2\');');
-        var cache = _(fp,{info:'infos'});
+        var cache = _(fp);
         cache.addDeps(root+'/src/c2.css');
         //缓存中设置c1.js的内容为'hello'
         cache.save('hello');
         //修改dep文件的内容,再cache一下，
-        fis.util.write(root+'/src/c2.css','hahaha');
+        fis.util.touch(root+'/src/c2.css',1234566523);
         var obj = {};
-        fis.util.write(fp,'wwww');
         cache = _(fp);
         var res = cache.revert(obj);
         expect(res).to.be.false;
