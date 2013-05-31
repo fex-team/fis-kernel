@@ -116,7 +116,7 @@ describe('revert(file)',function(){
         //缓存中设置c1.js的内容为'hello'
         cache.save('hello');
         //修改dep文件的内容,再cache一下，
-        fis.util.touch(root+'/src/c2.css',1234566523);
+        fis.util.touch(root+'/src/c2.css',12345664);
         var obj = {};
         cache = _(fp);
         var res = cache.revert(obj);
