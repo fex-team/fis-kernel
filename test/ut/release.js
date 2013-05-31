@@ -244,17 +244,17 @@ describe('release',function(){
     });
 
 
-    it('beforePack & afterPack',function(){
+    it('prepackager & postpackager',function(){
         fis.project.setProjectRoot(_testPath+"/test3");
         var conf = _testPath+"/test3/fis-conf.js";
         fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
         var files = [];
         var opt = {
-            beforePack:function(ret){
+            prepackager:function(ret){
                 expect(ret.pkg).to.deep.equal({});
             },
-            afterPack:function(ret){
+            postpackager:function(ret){
                 expect("__p0__.js" in ret.pkg).to.equal(true);
                 expect("__p1__.js" in ret.pkg).to.equal(true);
             },
