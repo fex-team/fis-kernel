@@ -291,6 +291,7 @@ describe('getUrl(withHash, withDomain)',function(){
     });
     it('general',function(){
         //非js、css、图片文件
+        fis.config.init();
         var path = __dirname+'/util/encoding/gbk.txt?__inline';
         var f = _.wrap(path);
         var url = f.getUrl();
@@ -303,6 +304,7 @@ describe('getUrl(withHash, withDomain)',function(){
     });
     it('with hash',function(){
         //非js、css、图片文件
+        fis.config.init();
         var path = __dirname+'/util/encoding/gbk.txt?__inline';
         var f = _.wrap(path);
         var url = f.getUrl(true);
@@ -315,6 +317,7 @@ describe('getUrl(withHash, withDomain)',function(){
     });
     it('with domain',function(){
         //非js、css、图片文件
+        fis.config.init();
         var path = __dirname+'/util/encoding/gbk.txt';
         var f = _.wrap(path);
         var url = f.getUrl(false,true);
@@ -328,8 +331,40 @@ describe('getUrl(withHash, withDomain)',function(){
 
     });
 
+    it('with domain——domain是对象，且键是图片，对图片的通用处理',function(){
+        //非js、css、图片文件
+        fis.config.init();
+        var path = __dirname+'/util/img/data.png';
+        var f = _.wrap(path);
+        var url = f.getUrl(false,true);
+        expect(url).to.equal('/util/img/data.png');
+        //js、css、图片文件
+        fis.config.set('roadmap.domain',{
+            'image':'img.baidu.com',
+            '**.js':'js.baidu.com',//'**'代表多级目录
+            '*.css':'css.baidu.com'
+        });
+        f = _.wrap(path);
+        url = f.getUrl(false,true);
+        expect(url).to.equal('img.baidu.com/util/img/data.png');
+
+        path = __dirname+'/file/ext/lint/lint.js';
+        f = _.wrap(path);
+        url = f.getUrl(false,true);
+        expect(url).to.equal('js.baidu.com/file/ext/lint/lint.js');
+
+
+        path = __dirname+'/file/css/test.css?__inline';
+        f = _.wrap(path);
+        url = f.getUrl(false,true);
+        //同级目录下没有css文件，所以不会被命中
+        expect(url).to.equal('/file/css/test.css?__inline');
+    });
+
+
     it('with hash and domain',function(){
         //非js、css、图片文件
+        fis.config.init();
         var path = __dirname+'/util/encoding/gbk.txt';
         var f = _.wrap(path);
         var url = f.getUrl(true,true);
@@ -473,7 +508,7 @@ describe('addSameNameRequire(ext)',function(){
         var path = __dirname+'/file/css/test.js';
         var f = _.wrap(path);
         //存在同名的css文件
-        f.addSameNameRequire('.less');
+        f.addSameNameRequire('.css');
         expect(f.requires).to.deep.equal([
             'file/css/test.css'
         ]);
