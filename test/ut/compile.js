@@ -28,7 +28,7 @@ describe('compile(path, debug)', function () {
         config.init();
         fis.project.setProjectRoot(root);
         fis.project.setTempRoot(root+'/target/');
-        _.copy(root+'/fis-modular-modular',root+'/../../../node_modules/fis-modular-modular');
+        _.copy(root+'/fis-modular-modular',root+'/../../../node_modules/fis-preprocessor-modular');
         _.copy(root+'/fis-lint-lint',root+'/../../../node_modules/fis-lint-lint');
         _.copy(root+'/fis-optimizer-optimizer',root+'/../../../node_modules/fis-optimizer-optimizer');
         _.copy(root+'/fis-parser-parser',root+'/../../../node_modules/fis-parser-parser');
@@ -37,7 +37,7 @@ describe('compile(path, debug)', function () {
             parser : {
                 js : 'parser'
             },
-            modular : {
+            preprocessor : {
                 js : 'modular'
             },
             lint :{
@@ -69,7 +69,7 @@ describe('compile(path, debug)', function () {
         //恢复环境
         config.set(conf);
         compile.clean();
-        _.del(root+'/../../../node_modules/fis-modular-modular');
+        _.del(root+'/../../../node_modules/fis-preprocessor-modular');
         _.del(root+'/../../../node_modules/fis-lint-lint');
         _.del(root+'/../../../node_modules/fis-optimizer-optimizer');
         _.del(root+'/../../../node_modules/fis-parser-parser');
@@ -125,11 +125,11 @@ describe('compile(path, debug)', function () {
         f1.isMod = true;
         var c = compile(f1).getContent();
         //coffee默认不走parser，因为parser就是做coffee到js的转换之类的事情的
-        expect(c).to.equal('I am embed.js;' +content3 +parstr + optstr + optstr + parstr + modstr + optstr);
+        expect(c).to.equal('I am embed.js;' +content3 +parstr + modstr + optstr + modstr +optstr + parstr + modstr + optstr);
 
         c = compile(f1).getContent();
         //coffee默认不走parser，因为parser就是做coffee到js的转换之类的事情的
-        expect(c).to.equal('I am embed.js;' +content3 +parstr + optstr + optstr + parstr + modstr + optstr);
+        expect(c).to.equal('I am embed.js;' +content3 +parstr + modstr + optstr + modstr +optstr + parstr + modstr + optstr);
 
 
         //修改embed的文件，看主文件中embed的内容是否发生改变
@@ -138,7 +138,7 @@ describe('compile(path, debug)', function () {
         //故意错开他们的修改时间，使得他们的timestamp发生改变，从而使得缓存失效
         _.touch(f3,12345678);
         c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + content3 +parstr + optstr + optstr + parstr + modstr + optstr);
+        expect(c).to.equal('I am embed.js;' + content3 +parstr + modstr+ optstr + modstr+ optstr + parstr + modstr + optstr);
     });
 
     it('embed--a->b->c,cache b,a first then change c and watch changes of a', function(){
@@ -165,8 +165,8 @@ describe('compile(path, debug)', function () {
         _.write(f3, content3);
         //故意错开他们的修改时间，使得他们的timestamp发生改变，从而使得缓存失效
         _.touch(f3,12345678);
-        var c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + content3 +parstr + optstr + optstr + parstr + optstr);
+        c = compile(f1).getContent();
+        expect(c).to.equal('I am embed.js;' + content3 +parstr + modstr+ optstr + modstr+ optstr + parstr + modstr +optstr);
     });
 
     it('embed--single embed', function () {
@@ -184,18 +184,18 @@ describe('compile(path, debug)', function () {
         tempfiles.push(f3);
         var c = compile(f1).getContent();
         //coffee默认不走parser，因为parser就是做coffee到js的转换之类的事情的
-        expect(c).to.equal('I am embed.js;' + content2 + optstr + parstr + optstr);
+        expect(c).to.equal('I am embed.js;' + content2 + modstr +optstr + parstr + modstr +optstr);
         //from cache
         c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + content2 + optstr + parstr + optstr);
+        expect(c).to.equal('I am embed.js;' + content2 + modstr +optstr + parstr + modstr +optstr);
         //f3也embed f2
         c = compile(f3).getContent();
-        expect(c).to.equal('I am embed2.js;' + content2 + optstr + parstr + optstr);
+        expect(c).to.equal('I am embed2.js;' + content2 + modstr +optstr + parstr + modstr +optstr);
 
             //修改embed的文件，看主文件中embed的内容是否发生改变
         _.touch(f2,12345678);
         c = compile(f3).getContent();
-        expect(c).to.equal('I am embed2.js;' + content2 + optstr + parstr + optstr);
+        expect(c).to.equal('I am embed2.js;' + content2 + modstr +optstr + parstr + modstr +optstr);
     });
     it('require', function () {
         var f1 = _(__dirname, 'file/require.js'),
@@ -222,8 +222,8 @@ describe('compile(path, debug)', function () {
         });
         /*注意，这种方式是直接覆盖roadmap.domain下所有的设置*/
         config.set('roadmap.domain',{
-            'js' : 'http://js.baidu.com/',
-            'coffee' : 'http://coffee.baidu.com/',
+            '*.js' : 'http://js.baidu.com/',
+            '*.coffee' : 'http://coffee.baidu.com/',
             '*' : 'http://www.baidu.com/'
         });
         var f1 = _(__dirname, 'file/uri.js'),
@@ -239,9 +239,9 @@ describe('compile(path, debug)', function () {
         tempfiles.push(f2);
         tempfiles.push(f3);
         f2 = file(f2);
-        var hash = f2.getHash();
         var c = compile(f1).getContent();
-        expect(c).to.equal('http://coffee.baidu.com/static/curi_'+hash+'.js?i=2I am uri.js;http://coffee.baidu.com/static/curi_'+hash+'.js?i=1./static/uri.php?i=4.'+parstr);
+        var hash = _.md5('I am uri.coffee;--module--');
+        expect(c).to.equal('http://coffee.baidu.com/static/curi_'+hash+'.js?i=2I am uri.js;http://coffee.baidu.com/static/curi_'+hash+'.js?i=1./static/uri.php?i=4.'+parstr +modstr);
         //debug
         compile.setup({
             debug: true,
@@ -250,15 +250,9 @@ describe('compile(path, debug)', function () {
             lint: false,
             domain: true
         });
-        //todo debug模式怎么用的，应该是没有cdn的
-//        c = compile(f1).getContent();
-//        expect(c).to.equal('/static/uri.js?i=2I am uri.js;/static/uri.js?i=1./static/uri.php?i=4.'+parstr);
         //from cache
         c = compile(f1).getContent();
-        expect(c).to.equal('http://coffee.baidu.com/static/curi_23b27f7.js?i=2I am uri.js;http://coffee.baidu.com/static/curi_23b27f7.js?i=1./static/uri.php?i=4.'+parstr);
-        //debug from cache
-//        c = compile(f1, 1).getContent();
-//        expect(c).to.equal('/static/uri.js?i=2I am uri.js;/static/uri.js?i=1./static/uri.php?i=4.'+parstr);
+        expect(c).to.equal('http://coffee.baidu.com/static/curi_'+hash+'.js?i=2I am uri.js;http://coffee.baidu.com/static/curi_ca11557.js?i=1./static/uri.php?i=4.'+parstr +modstr );
     });
 
     it('dep', function(){
@@ -284,7 +278,7 @@ describe('compile(path, debug)', function () {
 
     it('inline--js',function(){
         //清空前面的config参数
-        config.set();
+        config.init();
         var f1 = _(__dirname, 'file/embed.js'),
             f2 = _(__dirname, '/e.js'),
             f3 = _(__dirname, 'file/embed/e2.js'),
@@ -308,7 +302,7 @@ describe('compile(path, debug)', function () {
 
     it('uri--js',function(){
         //清空前面的config参数
-        config.set();
+        config.init();
         var root = __dirname+'/compile/';
         fis.project.setProjectRoot(root);
         var f1 = compile(root+'js/uri.js');
@@ -319,7 +313,7 @@ describe('compile(path, debug)', function () {
 
     it('inline,uri--css',function(){
         //清空前面的config参数
-        config.set();
+        config.init();
         var root = __dirname+'/compile/';
         fis.project.setProjectRoot(root);
 
@@ -332,7 +326,7 @@ describe('compile(path, debug)', function () {
     //比上面那个case多考虑了一些路径的问题
     it('inline--css',function(){
         //清空前面的config参数
-        config.set();
+        config.init();
         var root = __dirname+'/compile/';
         fis.project.setProjectRoot(root);
         var f1 = root+'css/c.css',
@@ -347,7 +341,7 @@ describe('compile(path, debug)', function () {
 
     it('inline,uri--html',function(){
         //清空前面的config参数
-        config.set();
+        config.init();
         var root = __dirname+'/compile/';
         var root = __dirname+'/compile/';
         fis.project.setProjectRoot(root);
@@ -400,6 +394,75 @@ describe('compile(path, debug)', function () {
         expect(content).to.equal(expectstr);
 
         expect(f1.requires).to.deep.equal([ 'js/main.js', 'css/main.css', './main.css' ]);
+    });
+
+    it('modules-逗号隔开',function(){
+        config.set('modules', {
+            parser : {
+                js : 'parser'
+            },
+            preprocessor : {
+                js : 'modular,modular1'
+            },
+            lint :{
+                js :'lint'
+            },
+            optimizer :{
+                js :'optimizer'
+            }
+        });
+        _.copy(root+'/fis-modular-modular',root+'/../../../node_modules/fis-preprocessor-modular1');
+        added = parstr+modstr+modstr+optstr;
+
+        var f = _(__dirname, 'file/general.js'),
+            content = 'var abc = 123;';
+        _.write(f, content);
+        tempfiles.push(f);
+        var cache = fis.cache(f);
+
+        f = file(f);
+        f.isMod = true;
+        var c = compile(f).getContent();
+        expect(c).to.equal(content + added);
+        //from cache
+        c = compile(f).getContent();
+        expect(c).to.equal(content + added);
+
+        _.del(root+'/../../../node_modules/fis-modular-modular1');
+    });
+
+    it('modules-数组且数组中有function',function(){
+        config.set('modules', {
+            parser : {
+                js : 'parser'
+            },
+            preprocessor : {
+                //require返回一个function
+                js : ['modular','modular1',require('fis-preprocessor-modular')]
+            },
+            optimizer :{
+                js :'optimizer'
+            }
+        });
+        _.copy(root+'/fis-modular-modular',root+'/../../../node_modules/fis-preprocessor-modular1');
+        added = parstr+modstr+modstr+modstr+optstr;
+
+        var f = _(__dirname, 'file/general.js'),
+            content = 'var abc = 123;';
+        _.write(f, content);
+        _.touch(f,12344);
+        tempfiles.push(f);
+        var cache = fis.cache(f);
+
+        f = file(f);
+        f.isMod = true;
+        var c = compile(f).getContent();
+        expect(c).to.equal(content + added);
+        //from cache
+        c = compile(f).getContent();
+        expect(c).to.equal(content + added);
+
+        _.del(root+'/../../../node_modules/fis-modular-modular1');
     });
 
 });
