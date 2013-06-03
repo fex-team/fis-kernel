@@ -2,8 +2,8 @@ fis.config.merge({
     namespace : 'photo',
     roadmap : {
         domain : {
-            '*.js' : 'http://img.baidu.com',
-            '*.css' : 'http://css.baidu.com'
+            '**.js' : 'http://img.baidu.com',
+            '**.css' : 'http://css.baidu.com'
         },
         path : [
             {
@@ -43,9 +43,9 @@ fis.config.merge({
         ]
     },
     settings : {
-        modular : {
-            reqlang : {
-                wrap : 'amd'
+        postprocessor  : {
+            jswrapper  : {
+                type : 'amd'
             }
         }
     },
@@ -55,7 +55,7 @@ fis.config.merge({
             to : '/home/zhangyunlong/public_html'
         }
     },
-    merge : {
+    pack : {
         'static/aio.js' : [
             'widget/comp/comp.js',
             'widget/list/list.js'

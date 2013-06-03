@@ -13,7 +13,8 @@ var release = fis.release,
 var expect = require('chai').expect;
 
 describe('release',function(){
-    before(function(){
+
+    beforeEach(function(){
         config.init();
     });
 
@@ -30,7 +31,8 @@ describe('release',function(){
                     expect(file.domain).to.equal("http://css.baidu.com");
                 }
             },
-            pack:true
+            pack:true,
+            domain:true
         },files=[],expectFiles;
         expectFiles =
             [ _testPath+'/test1/index.css',
@@ -49,20 +51,20 @@ describe('release',function(){
                 _testPath+'/test1/widget/list/list.css',
                 _testPath+'/test1/widget/list/list.js',
                 _testPath+'/test1/widget/list/list.tpl' ];
-        fis.project.setProjectRoot(_testPath+"/test1");
+        project.setProjectRoot(_testPath+"/test1");
         var conf = _testPath+"/test1/fis-conf.js";
-        fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
+        config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
 
         release(opt,function(ret){
             /*
              *打包的文件存在
              * */
-             expect(ret.pkg["__p0__.js"].url).to.equal("/static/aio.js");
+             expect("static/aio.js" in ret.pkg).to.true;
              //包的内容正确
-             expect(ret.map.pkg.p0.has).to.deep.equal([ 'photo:widget/comp/comp.js', 'photo:widget/list/list.js' ]);
+             expect(ret.map.pkg['photo:p0'].has).to.deep.equal([ 'photo:widget/comp/comp.js', 'photo:widget/list/list.js' ]);
              //依赖正确
-             expect(ret.map.pkg.p0.deps).to.deep.equal(['photo:widget/list/list.css']);
+             expect(ret.map.pkg['photo:p0'].deps).to.deep.equal(['photo:widget/list/list.css']);
 
              /*
               * 普通文件 打包文件 map文件内容测试
@@ -70,11 +72,8 @@ describe('release',function(){
 
             fs.readFile(_testPath+"/expect1/photo-map.json","utf-8",function(err,data){
                 expect(ret.pkg["/photo-map.json"]._content).to.equal(data);
-                fs.readFile(_testPath+"/expect1/__p0__.js","utf-8",function(err,data1){
-//                    expect(ret.pkg["__p0__.js"]._content).to.equal(data1);
-                    expect(files).to.deep.equal(expectFiles);
-                    done();
-                });
+                expect(files).to.deep.equal(expectFiles);
+                done();
             });
 
         });
@@ -84,21 +83,12 @@ describe('release',function(){
     * 依赖测试
     * */
     it('deps',function(){
-	    fis.config.del("roadmap.path");
-        fis.project.setProjectRoot(_testPath+"/test2");
+        project.setProjectRoot(_testPath+"/test2");
         var conf = _testPath+"/test2/fis-conf.js";
-        fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
+        config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
         var files = [];
         var opt = {
-            afterEach:function(file){
-                files.push(file.origin);
-                if(file.ext == ".js"){
-                    expect(file.domain).to.equal("http://img.baidu.com");
-                }else if(file.ext == ".css"){
-                    expect(file.domain).to.equal("http://css.baidu.com");
-                }
-            },
             pack:true
         };
         release(opt,function(ret){
@@ -128,9 +118,9 @@ describe('release',function(){
 
 
     it(' 参数 md5',function(){
-        fis.project.setProjectRoot(_testPath+"/test2");
+        project.setProjectRoot(_testPath+"/test2");
         var conf = _testPath+"/test2/fis-conf.js";
-        fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
+        config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
         var files = [];
         var opt = {
@@ -157,35 +147,36 @@ describe('release',function(){
     });
 
 
-    it('domain = true',function(){
-        fis.project.setProjectRoot(_testPath+"/test2");
-        var conf = _testPath+"/test2/fis-conf.js";
-        fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
-        require(conf);
-        var files = [];
-        var opt = {
-            afterEach:function(file){
-                files.push(file.origin);
-                if(file.ext == ".js"){
-                    expect(file.domain).to.equal("http://img.baidu.com");
-                }else if(file.ext == ".css"){
-                    expect(file.domain).to.equal("http://css.baidu.com");
-                }
-            },
-            domain:true
-        };
-
-        release(opt,function(ret){
-            for(var file in ret.map.res){
-               if(ret.map.res[file].type == "css"){
-                    expect(/^http:\/\/css\.baidu\.com/.test(ret.map.res[file].uri)).to.equal(true);
-               }else if(ret.map.res[file].type == "js"){
-                   expect(/^http:\/\/img\.baidu\.com/.test(ret.map.res[file].uri)).to.equal(true);
-               }
-            }
-        });
-    });
-
+//    it('domain = true',function(){
+//        config.init();
+//        project.setProjectRoot(_testPath+"/test2");
+//        var conf = _testPath+"/test2/fis-conf.js";
+//        config.merge(fis.util.readJSON(_testPath + '/standard.json'));
+//        require(conf);
+//        var files = [];
+//        var opt = {
+//            afterEach:function(file){
+//                files.push(file.origin);
+//                if(file.ext == ".js"){
+//                    expect(file.domain).to.equal("http://img.baidu.com");
+//                }else if(file.ext == ".css"){
+//                    expect(file.domain).to.equal("http://css.baidu.com");
+//                }
+//            },
+//            domain:true
+//        };
+//
+//        release(opt,function(ret){
+//            for(var file in ret.map.res){
+//               if(ret.map.res[file].type == "css"){
+//                    expect(/^http:\/\/css\.baidu\.com/.test(ret.map.res[file].uri)).to.equal(true);
+//               }else if(ret.map.res[file].type == "js"){
+//                   expect(/^http:\/\/img\.baidu\.com/.test(ret.map.res[file].uri)).to.equal(true);
+//               }
+//            }
+//        });
+//    });
+//
     it('domain = false',function(){
         fis.project.setProjectRoot(_testPath+"/test2");
         var conf = _testPath+"/test2/fis-conf.js";
@@ -193,14 +184,6 @@ describe('release',function(){
         require(conf);
         var files = [];
         var opt = {
-            afterEach:function(file){
-                files.push(file.origin);
-                if(file.ext == ".js"){
-                    expect(file.domain).to.equal("http://img.baidu.com");
-                }else if(file.ext == ".css"){
-                    expect(file.domain).to.equal("http://css.baidu.com");
-                }
-            },
             domain:false
         };
 
@@ -214,8 +197,8 @@ describe('release',function(){
             }
         });
     });
-
-
+//
+//
     it('beforeEach & afterEach',function(){
         fis.project.setProjectRoot(_testPath+"/test2");
         var conf = _testPath+"/test2/fis-conf.js";
@@ -244,6 +227,7 @@ describe('release',function(){
     });
 
 
+
     it('prepackager & postpackager',function(){
         fis.project.setProjectRoot(_testPath+"/test3");
         var conf = _testPath+"/test3/fis-conf.js";
@@ -255,8 +239,8 @@ describe('release',function(){
                 expect(ret.pkg).to.deep.equal({});
             },
             postpackager:function(ret){
-                expect("__p0__.js" in ret.pkg).to.equal(true);
-                expect("__p1__.js" in ret.pkg).to.equal(true);
+                expect("photo:p0.js" in ret.pkg).to.equal(true);
+                expect("photo:p1.js" in ret.pkg).to.equal(true);
             },
             pack:true
         };

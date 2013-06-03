@@ -2,8 +2,8 @@ fis.config.merge({
     namespace : 'photo',
     roadmap : {
         domain : {
-            '*.js' : 'http://img.baidu.com',
-            '*.css' : 'http://css.baidu.com'
+            '**.js' : 'http://img.baidu.com',
+            '**.css' : 'http://css.baidu.com'
         },
         path : [
             {
