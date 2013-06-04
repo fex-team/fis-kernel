@@ -61,7 +61,7 @@ fis.config.merge({
             to : '/home/zhangyunlong/public_html'
         }
     },
-    merge : {
+    pack : {
         'static/aio.js' : [
             'widget/comp/comp.js',
             'widget/list/list.js'
