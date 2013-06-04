@@ -17,14 +17,14 @@ var  uri = fis.uri,
 var expect = require('chai').expect;
 
     describe('uri()', function () {
-        before(function(){
+        beforeEach(function(){
             config.init();
             project.setProjectRoot(_path);
-        })
+        });
+
         it('relative path "/"', function () {
             expect(uri("uri/file/a.js?a=a","/common")["origin"]).to.equal("uri/file/a.js?a=a");
             expect(uri("uri/file/a.js?a=a","/common")["query"]).to.equal("?a=a");
-            expect(uri("uri/file/a.js?a=a","/common")["file"]["fullname"]).to.equal("/common/uri/file/a.js");
         });
 
         it("absolute path",function(){
@@ -36,15 +36,6 @@ var expect = require('chai').expect;
         });
     });
 
-    describe('getId()', function () {
-        it('relative path "/"', function (){
-            project.setProjectRoot(_path);
-            expect(uri("uri/file/a.js?a=a","/common")["origin"]).to.equal("uri/file/a.js?a=a");
-            expect(uri("uri/file/a.js?a=a","/common")["query"]).to.equal("?a=a");
-            expect(uri("uri/file/a.js?a=a","/common")["file"]["fullname"]).to.equal("/common/uri/file/a.js");
-        });
-
-    });
 
    /*
    *  将变量${var}替换成 config中的值
@@ -156,35 +147,17 @@ var expect = require('chai').expect;
     describe('roadmap()', function () {
         it('relative path "/"', function (){
             var subpath,pth,obj={};
-            subpath = "./demo/index1.tpl";
-            pth = "demo";
+            subpath = "";
+            pth = "path";
 
-            var regExp = new RegExp(".*index3.*","i");//必须要这样来定义正则，/.*index3.*/这样不行？
-            fis.config.set('var2', 'index2');
-            fis.config.set('roadmap.demo',[
+            fis.config.set('roadmap.path',[
                 {
-                    reg:"index1.*",
+                    reg:"/demo\/index1.*",
                     page:"index1.tpl"
-                },
-                {
-                    reg:"${var2}",
-                    page:"index2.tpl"
-                },
-                {
-                    reg:regExp,
-                    page:"index3.tpl"
                 }
             ]);
+            subpath = "/demo/index1.tpl";
             expect(uri.roadmap(subpath,pth,obj)).to.deep.equal({page:"index1.tpl"});
-            /*
-             * 正则中使用定义的变量
-             * */
-            subpath = "./demo/index2.tpl";
-            expect(uri.roadmap(subpath,pth,obj)).to.deep.equal({page:"index2.tpl"});
-            /*
-             * 显示使用正则
-             * */
-            subpath = "./demo/index3.tpl";
-            expect(uri.roadmap(subpath,pth,obj)).to.deep.equal({page:"index3.tpl"});
+
          });
     });
