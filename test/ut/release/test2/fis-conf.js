@@ -45,7 +45,6 @@ fis.config.merge({
                 reg : /^.*$/,
                 release : '/static/${namespace}$&'
             }
-
         ]
     },
     settings : {
