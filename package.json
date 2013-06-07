@@ -1,7 +1,7 @@
 {
     "name" : "fis-kernel",
     "description" : "fis kernel.",
-    "version" : "1.4.6",
+    "version" : "1.4.7",
     "author" : "FIS Team <fis@baidu.com>",
     "homepage" : "http://fis.baidu.com/",
     "license": "MIT",
@@ -19,6 +19,6 @@
     },
     "dependencies" : {
         "tar"  : "0.1.17",
-        "iconv-lite" : "0.2.9"
+        "iconv-lite" : "0.2.10"
     }
 }
