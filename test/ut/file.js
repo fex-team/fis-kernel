@@ -42,51 +42,7 @@ describe('exists',function(){
     });
 });
 
-describe('isText',function(){
-    beforeEach(function(){
-        fis.project.setProjectRoot(__dirname);
-    });
-    it('general',function(){
-        var f = _.wrap('');
-        expect(f.isText()).to.be.false;
-        f = _.wrap('a.css');
-        expect(f.isText()).to.be.true;
-        f = _.wrap('a.css/a');
-        expect(f.isText()).to.be.false;
-        f = _.wrap('a.js/a.css');
-        expect(f.isText()).to.be.true;
-        f = _.wrap('test.js');
-        expect(f.isText()).to.be.true;
-        f = _.wrap('/dd/dd/test.bak');
-        expect(f.isText()).to.be.true;
-        f = _.wrap('d:/sdf/sdf/test.tmp');
-        expect(f.isText()).to.be.true;
-    });
 
-});
-describe('isImage',function(){
-    beforeEach(function(){
-        fis.project.setProjectRoot(__dirname);
-    });
-    it('general',function(){
-        var f = _.wrap('');
-        expect(f.isImage()).to.be.false;
-        f = _.wrap('d:/sdf/sdf/test.txt');
-        expect(f.isImage()).to.be.false;
-        f = _.wrap('a.jpg');
-        expect(f.isImage()).to.be.true;
-        f = _.wrap('a.gif/a');
-        expect(f.isImage()).to.be.false;
-        f = _.wrap('a.js/a.jpeg');
-        expect(f.isImage()).to.be.true;
-        f = _.wrap('test.png');
-        expect(f.isImage()).to.be.true;
-        f = _.wrap('/dd/dd/test.bmp');
-        expect(f.isImage()).to.be.true;
-        f = _.wrap('d:/sdf/sdf/test.svg');
-        expect(f.isImage()).to.be.true;
-    });
-});
 describe('toString',function(){
     beforeEach(function(){
         fis.project.setProjectRoot(__dirname);

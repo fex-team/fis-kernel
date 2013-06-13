@@ -16,6 +16,36 @@ function buf2arr(buf) {
     return Array.prototype.slice.call(buf);
 }
 
+describe('isTextFile',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
+    it('general',function(){
+        expect(_.isTextFile('')).to.be.false;
+        expect(_.isTextFile('a.css')).to.be.true;
+        expect(_.isTextFile('a.css/a')).to.be.false;
+        expect(_.isTextFile('a.js/a.css')).to.be.true;
+        expect(_.isTextFile('test.js')).to.be.true;
+        expect(_.isTextFile('/dd/dd/test.bak')).to.be.true;
+        expect(_.isTextFile('d:/sdf/sdf/test.tmp')).to.be.true;
+    });
+});
+
+describe('isImageFile',function(){
+    beforeEach(function(){
+        fis.project.setProjectRoot(__dirname);
+    });
+    it('general',function(){
+        expect(_.isImageFile('')).to.be.false;
+        expect(_.isImageFile('d:/sdf/sdf/test.txt')).to.be.false;
+        expect(_.isImageFile('a.jpg')).to.be.true;
+        expect(_.isImageFile('a.gif/a')).to.be.false;
+        expect(_.isImageFile('a.js/a.jpeg')).to.be.true;
+        expect(_.isImageFile('test.png')).to.be.true;
+        expect(_.isImageFile('/dd/dd/test.bmp')).to.be.true;
+        expect(_.isImageFile('d:/sdf/sdf/test.svg')).to.be.true;
+    });
+});
 describe('_.normalize(path1, [path2], [...])', function () {
     before(function(){
        config.init();

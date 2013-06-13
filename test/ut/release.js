@@ -69,7 +69,6 @@ describe('release',function(){
              /*
               * 普通文件 打包文件 map文件内容测试
               * */
-
             fs.readFile(_testPath+"/expect1/photo-map.json","utf-8",function(err,data){
                 expect(ret.pkg["/photo-map.json"]._content).to.equal(data);
                 expect(files).to.deep.equal(expectFiles);
@@ -79,7 +78,7 @@ describe('release',function(){
         });
     });
 
-    it('domain = true && domain = false',function(){
+    it('domain——true',function(done){
         project.setProjectRoot(_testPath+"/test2");
         var conf = _testPath+"/test2/fis-conf.js";
         config.merge(fis.util.readJSON(_testPath + '/standard.json'));
@@ -96,7 +95,6 @@ describe('release',function(){
             },
             domain:true
         };
-
         release(opt,function(ret){
             for(var file in ret.map.res){
                 if(ret.map.res[file].type == "css"){
@@ -105,9 +103,16 @@ describe('release',function(){
                     expect(/^http:\/\/img\.baidu\.com/.test(ret.map.res[file].uri)).to.equal(true);
                 }
             }
+            done();
         });
 
-        opt = {
+    });
+    it('domain——false',function(done){
+        project.setProjectRoot(_testPath+"/test2");
+        var conf = _testPath+"/test2/fis-conf.js";
+        config.merge(fis.util.readJSON(_testPath + '/standard.json'));
+        require(conf);
+        var opt = {
             domain:false
         };
         release(opt,function(ret){
@@ -118,6 +123,7 @@ describe('release',function(){
                     expect(/^http:\/\/img\.baidu\.com/.test(ret.map.res[file].uri)).to.equal(false);
                 }
             }
+            done();
         });
     });
 
@@ -125,7 +131,7 @@ describe('release',function(){
    /*
     * 依赖测试
     * */
-    it('deps',function(){
+    it('deps',function(done){
         project.setProjectRoot(_testPath+"/test4");
         var conf = _testPath+"/test4/fis-conf.js";
         config.merge(fis.util.readJSON(_testPath + '/standard.json'));
@@ -136,7 +142,7 @@ describe('release',function(){
         };
         release(opt,function(ret){
             /*
-             *  依赖检测
+             *  依赖检测，不但包括文件中require的内容，还包括同名的css文件
              * */
              expect(ret.src["/widget/list/list.js"].requires).to.deep.equal(
                  [  'photo:widget/comp/comp.js',
@@ -155,40 +161,45 @@ describe('release',function(){
            expect(ret.src["/ui/a/a.js"].requires).to.deep.equal(
                 ['photo:ui/b/b.js']
             );
+            done();
         });
     });
 
-    it(' 参数 md5',function(){
+    it('opt——md5',function(done){
         project.setProjectRoot(_testPath+"/test5");
         var conf = _testPath+"/test5/fis-conf.js";
         config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
-        var files = [];
         var opt = {
             md5:true
         };
-
         release(opt,function(ret){
             expect(ret.src["/index.css"]._hash).to.equal(fis.util.md5(ret.src["/index.css"]._content,7));
             expect(ret.src["/index.js"]._hash).to.equal(fis.util.md5(ret.src["/index.js"]._content,7));
             expect(ret.src["/ui/a/a.js"]._hash).to.equal(fis.util.md5(ret.src["/ui/a/a.js"]._content,7));
             expect(ret.src["/widget/list/list.js"]._hash).to.equal(fis.util.md5(ret.src["/widget/list/list.js"]._content,7));
+            done();
         });
-
+    });
+    it('opt——md5关闭',function(done){
+        project.setProjectRoot(_testPath+"/test5");
+        var conf = _testPath+"/test5/fis-conf.js";
+        config.merge(fis.util.readJSON(_testPath + '/standard.json'));
+        require(conf);
+        //关闭md5
         opt = {
             md5:false
         };
-
         release(opt,function(ret){
             expect("_hash" in ret.src["/index.css"]).to.equal(false);
             expect("_hash" in ret.src["/index.js"]).to.equal(false);
             expect("_hash" in ret.src["/ui/a/a.js"]).to.equal(false);
             expect("_hash" in ret.src["/widget/list/list.js"]).to.equal(false);
+            done();
         });
     });
 
-
-    it('beforeEach & afterEach',function(){
+    it('beforeEach & afterEach',function(done){
         fis.project.setProjectRoot(_testPath+"/test6");
         var conf = _testPath+"/test6/fis-conf.js";
         fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
@@ -209,19 +220,18 @@ describe('release',function(){
             },
             pack:true
         };
-        release(opt,function(ret){
-
+        release(opt,function(){
+            done();
         });
         expect(beforeFiles).to.deep.equal(afterFiles);
     });
 
 
-    it('prepackager & postpackager',function(){
+    it('prepackager & postpackager',function(done){
         fis.project.setProjectRoot(_testPath+"/test3");
         var conf = _testPath+"/test3/fis-conf.js";
         fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
-        var files = [];
         var opt = {
             prepackager:function(ret){
                 expect(ret.pkg).to.deep.equal({});
@@ -229,6 +239,7 @@ describe('release',function(){
             postpackager:function(ret){
                 expect("static/aio1.js" in ret.pkg).to.equal(true);
                 expect("static/aio.js" in ret.pkg).to.equal(true);
+                done();
             },
             pack:true
         };
@@ -245,7 +256,7 @@ describe('release',function(){
     });
 
 
-    it("打包支持正则",function(){
+    it("打包支持正则",function(done){
         fis.project.setProjectRoot(_testPath+"/test7");
         var conf = _testPath+"/test7/fis-conf.js";
         fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
@@ -267,6 +278,7 @@ describe('release',function(){
                 "photo:js/a/a.js",
                 "photo:js/b/b.js"
             ]);
+            done();
         });
 
     });
