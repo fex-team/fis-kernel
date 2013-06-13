@@ -283,7 +283,7 @@ describe('compile(path, debug)', function () {
             f2 = _(__dirname, '/e.js'),
             f3 = _(__dirname, 'file/embed/e2.js'),
             content1 = 'var str = \'\';__inline("../e.js")',
-            content2 = 'var f = "__inline(\'file/css/test.js\')";\n\n__inline(\'file/embed/e2.js\');var f = "__inline(\'file/css/test.js\')"',
+            content2 = 'var f = "__inline( \'file/css/test.js\' )";\n\n__inline(\'file/embed/e2.js\');var f = "__inline(\'file/css/test.js\')"',
             content3 = 'var a = "__inline(\'c.js\')"';
         _.write(f1, content1);
         _.write(f2, content2);
@@ -294,11 +294,12 @@ describe('compile(path, debug)', function () {
 
         f1 = compile(f1);
         var c = f1.getContent();
-        expect(c).to.equal('var str = \'\';var f = "__inline(\'file/css/test.js\')";\n\nvar a = "__inline(\'c.js\')";var f = "__inline(\'file/css/test.js\')"');
+        expect(c).to.equal('var str = \'\';var f = "__inline( \'file/css/test.js\' )";\n\nvar a = "__inline(\'c.js\')";var f = "__inline(\'file/css/test.js\')"');
         f2 = compile(f2);
         c = f2.getContent();
-        expect(c).to.equal('var f = "__inline(\'file/css/test.js\')";\n\nvar a = "__inline(\'c.js\')";var f = "__inline(\'file/css/test.js\')"');
+        expect(c).to.equal('var f = "__inline( \'file/css/test.js\' )";\n\nvar a = "__inline(\'c.js\')";var f = "__inline(\'file/css/test.js\')"');
     });
+
 
     it('uri--js',function(){
         //清空前面的config参数
@@ -307,7 +308,8 @@ describe('compile(path, debug)', function () {
         fis.project.setProjectRoot(root);
         var f1 = compile(root+'js/uri.js');
         var c = compile(f1).getContent();
-        expect(c).to.equal("'/js/inline_7725901.js';\"/js/inline_7725901.js\";");
+        //包括注释和正常的uri，字符串中的uri，跨行的uri
+        expect(c).to.equal("'/js/inline_7725901.js';\"/js/inline_7725901.js\";\n\"/js/inline_7725901.js\";'/js/inline_7725901.js';\n//__uri(\"./inline.js\");\n/*\n* __uri(\"./inline.js\");\n* */\"/js/inline_7725901.js\";\nvar a = '__uri(\"./inline.js\")';\n'/js/inline_7725901.js';");
 
     });
 
@@ -321,6 +323,23 @@ describe('compile(path, debug)', function () {
         var content = f1.getContent();
         var expectstr = file.wrap(root+'css/expect.css').getContent();
         expect(content).to.equal(expectstr);
+
+        //注释里的不做处理
+        f1 = _(root+'css/m.css');
+        var f2 = _(root+'css/in1.css'),
+            f3 = _(root+'css/in2.css'),
+            content1 = '/* @import url(./in1.css);*/\n/*@import url(./in2.css)*/import url( "./in2.css" )',
+            content2 = '.in1{\nbackground:red\n}',
+            content3 = '.in2{\n background:blue\n}';
+        _.write(f1, content1);
+        _.write(f2, content2);
+        _.write(f3, content3);
+        tempfiles.push(f1);
+        tempfiles.push(f2);
+        tempfiles.push(f3);
+        f1 = compile(f1);
+        expect(f1.getContent()).to.equal('/* @import url(./in1.css);*/\n/*@import url(./in2.css)*/import url("/css/in2_6e693ea.css")');
+
     });
 
     //比上面那个case多考虑了一些路径的问题
@@ -342,7 +361,6 @@ describe('compile(path, debug)', function () {
     it('inline,uri--html',function(){
         //清空前面的config参数
         config.init();
-        var root = __dirname+'/compile/';
         var root = __dirname+'/compile/';
         fis.project.setProjectRoot(root);
 
@@ -394,6 +412,12 @@ describe('compile(path, debug)', function () {
         expect(content).to.equal(expectstr);
 
         expect(f1.requires).to.deep.equal([ 'js/main.js', 'css/main.css', './main.css' ]);
+
+        //tpl、asp等后缀的文件也会被当做页面来处理
+        f1 = compile(root+'html/require.tpl');
+        content = f1.getContent();
+        expect(content).to.equal(expectstr);
+        expect(f1.requires).to.deep.equal([ 'js/main.js', 'css/main.css', './main.css' ]);
     });
 
     it('modules-逗号隔开',function(){
@@ -412,6 +436,7 @@ describe('compile(path, debug)', function () {
             }
         });
         _.copy(root+'/fis-modular-modular',root+'/../../../node_modules/fis-preprocessor-modular1');
+        tempfiles.push(root+'/../../../node_modules/fis-preprocessor-modular1');
         added = parstr+modstr+modstr+optstr;
 
         var f = _(__dirname, 'file/general.js'),
@@ -428,7 +453,6 @@ describe('compile(path, debug)', function () {
         c = compile(f).getContent();
         expect(c).to.equal(content + added);
 
-        _.del(root+'/../../../node_modules/fis-modular-modular1');
     });
 
     it('modules-数组且数组中有function',function(){
@@ -445,6 +469,7 @@ describe('compile(path, debug)', function () {
             }
         });
         _.copy(root+'/fis-modular-modular',root+'/../../../node_modules/fis-preprocessor-modular1');
+        tempfiles.push(root+'/../../../node_modules/fis-preprocessor-modular1');
         added = parstr+modstr+modstr+modstr+optstr;
 
         var f = _(__dirname, 'file/general.js'),
@@ -462,7 +487,6 @@ describe('compile(path, debug)', function () {
         c = compile(f).getContent();
         expect(c).to.equal(content + added);
 
-        _.del(root+'/../../../node_modules/fis-modular-modular1');
     });
 
 });
