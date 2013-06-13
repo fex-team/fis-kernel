@@ -52,16 +52,16 @@ describe('compile(path, debug)', function () {
                 'coffee' : 'js'
             },
             path : [{
-                        "reg" : "^\/(.*)\\.coffee$",
+                        "reg" : /^\/(.*)\\.coffee$/,
                         "release" : "/static/$1.js"
                     },
                     {
-                        "reg" : "^\/(.*)",
+                        "reg" : /^\/(.*)/,
                         "release" : "/static/$1"
-                    }],
-            url : [{
-                    "reg" : "^\/static\/(.*)$",
-                    "path" : "/$1"
+//                    }],
+//            url : [{
+//                    "reg" : "^\/static\/(.*)$",
+//                    "path" : "/$1"
                 }]
         });
     });
