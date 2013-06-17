@@ -187,7 +187,7 @@ describe('release',function(){
         config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
         //关闭md5
-        opt = {
+        var opt = {
             md5:false
         };
         release(opt,function(ret){

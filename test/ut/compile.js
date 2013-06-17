@@ -409,14 +409,14 @@ describe('compile(path, debug)', function () {
         var f1 = compile(root+'html/require.html');
         var content = f1.getContent();
         var expectstr = file.wrap(root+'html/expect_require.html').getContent();
-        expect(content).to.equal(expectstr);
+        expect(content.replace('\r','')).to.equal(expectstr.replace('\r',''));
 
         expect(f1.requires).to.deep.equal([ 'js/main.js', 'css/main.css', './main.css' ]);
 
         //tpl、asp等后缀的文件也会被当做页面来处理
         f1 = compile(root+'html/require.tpl');
         content = f1.getContent();
-        expect(content).to.equal(expectstr);
+        expect(content.replace('\r','')).to.equal(expectstr.replace('\r',''));
         expect(f1.requires).to.deep.equal([ 'js/main.js', 'css/main.css', './main.css' ]);
     });
 
@@ -442,7 +442,7 @@ describe('compile(path, debug)', function () {
         var f = _(__dirname, 'file/general.js'),
             content = 'var abc = 123;';
         _.write(f, content);
-        tempfiles.push(f);
+
         var cache = fis.cache(f);
 
         f = file(f);
@@ -452,6 +452,7 @@ describe('compile(path, debug)', function () {
         //from cache
         c = compile(f).getContent();
         expect(c).to.equal(content + added);
+        tempfiles.push(f);
 
     });
 
