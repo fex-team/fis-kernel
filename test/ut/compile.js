@@ -242,7 +242,8 @@ describe('compile(path, debug)', function () {
         f2 = file(f2);
         var c = compile(f1).getContent();
         var hash = _.md5('I am uri.coffee;--module--');
-        expect(c).to.equal('http://coffee.baidu.com/static/curi_'+hash+'.js?i=2I am uri.js;http://coffee.baidu.com/static/curi_'+hash+'.js?i=1./static/uri.php?i=4.'+parstr +modstr);
+        //保留‘/’，因为可能出现他们就是想要多一个斜杠的情况
+        expect(c).to.equal('http://coffee.baidu.com//static/curi_'+hash+'.js?i=2I am uri.js;http://coffee.baidu.com//static/curi_'+hash+'.js?i=1./static/uri.php?i=4.'+parstr +modstr);
         //debug
         compile.setup({
             debug: true,
@@ -253,9 +254,8 @@ describe('compile(path, debug)', function () {
         });
         //from cache
         c = compile(f1).getContent();
-        expect(c).to.equal('http://coffee.baidu.com/static/curi_'+hash+'.js?i=2I am uri.js;http://coffee.baidu.com/static/curi_ca11557.js?i=1./static/uri.php?i=4.'+parstr +modstr );
+        expect(c).to.equal('http://coffee.baidu.com//static/curi_'+hash+'.js?i=2I am uri.js;http://coffee.baidu.com//static/curi_ca11557.js?i=1./static/uri.php?i=4.'+parstr +modstr );
     });
-
     it('dep', function(){
         var f1 = _(__dirname, 'file/dep.js'),
             f2 = _(__dirname, 'file/dep.coffee'),

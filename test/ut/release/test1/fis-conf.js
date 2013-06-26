@@ -1,5 +1,9 @@
 fis.config.merge({
     namespace : 'photo',
+    modules : {
+        //打包调用fis-packager-your_packager插件进行处理
+        packager : 'map'
+    },
     roadmap : {
         domain : {
             '**.js' : 'http://img.baidu.com',
@@ -56,7 +60,7 @@ fis.config.merge({
         }
     },
     pack : {
-        'static/aio.js' : [
+        'aio.js' : [
             'widget/comp/comp.js',
             'widget/list/list.js'
         ]
