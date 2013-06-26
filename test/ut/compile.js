@@ -301,6 +301,7 @@ describe('compile(path, debug)', function () {
         expect(c).to.equal('var f = "__inline( \'file/css/test.js\' )";\n\nvar a = "__inline(\'c.js\')";var f = "__inline(\'file/css/test.js\')"');
     });
 
+
     /**
      * html中\<script\>标签正则匹配是否成功
     *以标签内是否能inline成功为指导，后面三个例子对应三种情况
