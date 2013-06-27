@@ -416,7 +416,7 @@ describe('compile(path, debug)', function () {
         //tpl、asp等后缀的文件也会被当做页面来处理
         f1 = compile(root+'html/require.tpl');
         content = f1.getContent();
-        expect(content.replace('\r','')).to.equal(expectstr.replace('\r',''));
+        expect(content.replace(/[\r\n]/g,'')).to.equal(expectstr.replace(/[\r\n]/g,''));
         expect(f1.requires).to.deep.equal([ 'js/main.js', 'css/main.css', './main.css' ]);
     });
 
