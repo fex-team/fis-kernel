@@ -1,10 +1,10 @@
 /**
- * Created with JetBrains WebStorm.
- * User: shenlixia01
- * Date: 13-5-15
- * Time: 下午3:37
- * To change this template use File | Settings | File Templates.
- */
+* Created with JetBrains WebStorm.
+* User: shenlixia01
+* Date: 13-5-15
+* Time: 下午3:37
+* To change this template use File | Settings | File Templates.
+*/
 
 'use strict';
 
@@ -87,6 +87,7 @@ describe('compile(path, debug)', function () {
     afterEach(function(){
         tempfiles.forEach(function(f){
             _.del(f);
+            _.del(root+'/target/');
         });
     });
     it('general', function(){
@@ -298,6 +299,68 @@ describe('compile(path, debug)', function () {
         f2 = compile(f2);
         c = f2.getContent();
         expect(c).to.equal('var f = "__inline( \'file/css/test.js\' )";\n\nvar a = "__inline(\'c.js\')";var f = "__inline(\'file/css/test.js\')"');
+    });
+
+
+    /**
+     * html中\<script\>标签正则匹配是否成功
+    *以标签内是否能inline成功为指导，后面三个例子对应三种情况
+     */
+    it('\html-\<script\>-RegularEM',function(){
+        //标签<script></script>
+        config.init();
+        var f1 = _(__dirname, 'file/embeded1.html'),
+            f2 = _(__dirname, 'file/e1.js'),
+            content1 = '<script>__inline(\'./e1.js\')</script>',
+            content2 = 'js_inline_test';
+        _.write(f1, content1);
+        _.write(f2, content2);
+        tempfiles.push(f1);
+        tempfiles.push(f2);
+
+        f1 = file(f1);
+        compile(f1);
+        var c = f1.getContent();
+
+        expect(c).to.equal('<script>js_inline_test</script>');
+    });
+
+    it('\html-\<script \>-RegularEM',function(){
+        //标签<script ></script>
+        config.init();
+        var f1 = _(__dirname, 'file/embeded2.html'),
+            f2 = _(__dirname, 'file/e2.js'),
+            content1 = '<script >__inline(\'./e2.js\')</script>',
+            content2 = 'js_inline_test';
+        _.write(f1, content1);
+        _.write(f2, content2);
+        tempfiles.push(f1);
+        tempfiles.push(f2);
+
+
+        f1 = file(f1);
+        compile(f1);
+        var c = f1.getContent();
+        expect(c).to.equal('<script >js_inline_test</script>');
+    });
+
+    it('\html-\<script ***\>-RegularEM',function(){
+        //标签<script ****></script>
+        config.init();
+        var f1 = _(__dirname, 'file/embeded3.html'),
+            f2 = _(__dirname, 'file/e3.js'),
+            content1 = '<script type="text/javascript">__inline(\'./e3.js\')</script>',
+            content2 = 'js_inline_test';
+        _.write(f1, content1);
+        _.write(f2, content2);
+        tempfiles.push(f1);
+        tempfiles.push(f2);
+
+
+        f1 = file(f1);
+        compile(f1);
+        var c = f1.getContent();
+        expect(c).to.equal('<script type="text/javascript">js_inline_test</script>');
     });
 
 
