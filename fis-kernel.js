@@ -79,12 +79,7 @@ fis.require = function(){
     try {
         return require(name);
     } catch(e) {
-        var msg = 'unable to load plugin [' + name + '], message : ';
-        if(e instanceof Error){
-            e.message = msg + e.message;
-        } else {
-            e = msg + e;
-        }
+        e.message = 'unable to load plugin [' + name + '], message : ' + e.message;
         fis.log.error(e);
     }
 };
