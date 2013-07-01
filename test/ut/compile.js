@@ -391,7 +391,7 @@ describe('compile(path, debug)', function () {
         f1 = _(root+'css/m.css');
         var f2 = _(root+'css/in1.css'),
             f3 = _(root+'css/in2.css'),
-            content1 = '/* @import url(./in1.css);*/\n/*@import url(./in2.css)*/import url( "./in2.css" )',
+            content1 = '/* @import url(./in1.css);*/\nimport url( "./in2.css" )\n/*@import url(./in2.css)*/import url( "./in2.css?__inline" )',
             content2 = '.in1{\nbackground:red\n}',
             content3 = '.in2{\n background:blue\n}';
         _.write(f1, content1);
@@ -401,7 +401,7 @@ describe('compile(path, debug)', function () {
         tempfiles.push(f2);
         tempfiles.push(f3);
         f1 = compile(f1);
-        expect(f1.getContent()).to.equal('/* @import url(./in1.css);*/\n/*@import url(./in2.css)*/import url("/css/in2_6e693ea.css");');
+        expect(f1.getContent()).to.equal('/* @import url(./in1.css);*/\nimport url("/css/in2_6e693ea.css");\n/*@import url(./in2.css)*/.in2{\n background:blue\n}');
 
     });
 
