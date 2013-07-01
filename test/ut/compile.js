@@ -401,7 +401,7 @@ describe('compile(path, debug)', function () {
         tempfiles.push(f2);
         tempfiles.push(f3);
         f1 = compile(f1);
-        expect(f1.getContent()).to.equal('/* @import url(./in1.css);*/\n/*@import url(./in2.css)*/import url("/css/in2_6e693ea.css")');
+        expect(f1.getContent()).to.equal('/* @import url(./in1.css);*/\n/*@import url(./in2.css)*/import url("/css/in2_6e693ea.css");');
 
     });
 
@@ -412,13 +412,13 @@ describe('compile(path, debug)', function () {
         var root = __dirname+'/compile/';
         fis.project.setProjectRoot(root);
         var f1 = root+'css/c.css',
-            content1 = '@import url(./inline.css?__inline);@import url(../css/inline.css?__inline);@import url(../css/inline.css?__inline);@import url(\'./inline.css?__inline\');@import url("./inline.css?__inline");';
+            content1 = '@import url(./inline.css?__inline);@import url(../css/inline.css?__inline);@import url(../css/inline.css?__inline)@import url(\'./inline.css?__inline\');@import url("./inline.css?__inline");';
         _.write(f1, content1);
         tempfiles.push(f1);
 
         f1 = compile(f1);
         var c = f1.getContent();
-        expect(c).to.equal('.test{\r\n   background: red;\r\n};.test{\r\n   background: red;\r\n};.test{\r\n   background: red;\r\n};.test{\r\n   background: red;\r\n};.test{\r\n   background: red;\r\n};')
+        expect(c).to.equal('.test{\r\n   background: red;\r\n}.test{\r\n   background: red;\r\n}.test{\r\n   background: red;\r\n}.test{\r\n   background: red;\r\n}.test{\r\n   background: red;\r\n}')
     });
 
     it('inline,uri--html',function(){
