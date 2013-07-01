@@ -391,7 +391,7 @@ describe('compile(path, debug)', function () {
         f1 = _(root+'css/m.css');
         var f2 = _(root+'css/in1.css'),
             f3 = _(root+'css/in2.css'),
-            content1 = '/* @import url(./in1.css);*/\nimport url( "./in2.css" )\n/*@import url(./in2.css)*/import url( "./in2.css?__inline" )',
+            content1 = '/* @import url(./in1.css);*/\nimport url( "./in2.css" )\n/*@import url(./in2.css)*/@import url( "./in2.css?__inline" )',
             content2 = '.in1{\nbackground:red\n}',
             content3 = '.in2{\n background:blue\n}';
         _.write(f1, content1);
