@@ -401,7 +401,7 @@ describe('compile(path, debug)', function () {
         tempfiles.push(f2);
         tempfiles.push(f3);
         f1 = compile(f1);
-        expect(f1.getContent()).to.equal('/* @import url(./in1.css);*/\nimport url("/css/in2_6e693ea.css");\n/*@import url(./in2.css)*/.in2{\n background:blue\n}');
+        expect(f1.getContent()).to.equal('/* @import url(./in1.css);*/\nimport url("/css/in2_6e693ea.css")\n/*@import url(./in2.css)*/.in2{\n background:blue\n}');
 
     });
 
