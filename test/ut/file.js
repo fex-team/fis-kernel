@@ -176,7 +176,7 @@ describe('writeTo(target)',function(){
         var path = __dirname+'/util/encoding/utf8.txt';
         var target = __dirname+'/tmp/utf8.txt';
         var f = _.wrap(path);
-        f.getContent();
+        fis.compile(f);
         f.writeTo( __dirname+'/tmp/utf8.txt');
         var binary = buf2arr(fs.readFileSync(target));
         expect(u.isUtf8(binary)).to.be.true;
@@ -188,7 +188,7 @@ describe('writeTo(target)',function(){
         var path = __dirname+'/util/encoding/gbk.txt';
         var target = __dirname+'/tmp/utf8.txt';
         var f = _.wrap(path);
-        f.getContent();
+        fis.compile(f);
         f.writeTo(target);
         var binary = buf2arr(fs.readFileSync(target));
         expect(u.isUtf8(binary)).to.be.true;
@@ -198,11 +198,11 @@ describe('writeTo(target)',function(){
 
     it('utf8-gbk',function(){
         //源文件是utf8，目标文件是gbk
+        fis.config.set('project.charset', 'gbk');
         var path = __dirname+'/util/encoding/utf8-bom.txt';
         var target = __dirname+'/tmp/gbk.txt';
         var f = _.wrap(path);
-        f.getContent();
-        fis.config.set('project.charset', 'gbk');
+        fis.compile(f);
         f.writeTo(target);
         var binary = buf2arr(fs.readFileSync(target));
         expect(u.isUtf8(binary)).to.be.false;
@@ -214,11 +214,11 @@ describe('writeTo(target)',function(){
     });
     it('gbk-gbk',function(){
         //gbk到gbk
+        fis.config.set('project.charset', 'gbk');
         var path = __dirname+'/util/encoding/gbk.txt';
         var target = __dirname+'/tmp/gbk.txt';
         var f = _.wrap(path);
-        f.getContent();
-        fis.config.set('project.charset', 'gbk');
+        fis.compile(f);
         f.writeTo(target);
         var binary = buf2arr(fs.readFileSync(target));
         expect(u.isUtf8(binary)).to.be.false;
