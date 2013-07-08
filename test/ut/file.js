@@ -167,68 +167,68 @@ describe('getBase64(prefix)',function(){
     });
 
 });
-describe('writeTo(target)',function(){
-    beforeEach(function(){
-        fis.project.setProjectRoot(__dirname);
-    });
-    it('utf8-utf8',function(){
-        //源文件和目标文件都是utf8
-        var path = __dirname+'/util/encoding/utf8.txt';
-        var target = __dirname+'/tmp/utf8.txt';
-        var f = _.wrap(path);
-        fis.compile(f);
-        f.writeTo( __dirname+'/tmp/utf8.txt');
-        var binary = buf2arr(fs.readFileSync(target));
-        expect(u.isUtf8(binary)).to.be.true;
-        expect(fs.readFileSync(target)).to.deep.equal(fs.readFileSync(__dirname+'/util/encoding/utf8.txt'));
-        u.del((__dirname+'/tmp/'));
-    });
-    it('gbk-utf8',function(){
-        //源文件是gbk，目标文件是utf8
-        var path = __dirname+'/util/encoding/gbk.txt';
-        var target = __dirname+'/tmp/utf8.txt';
-        var f = _.wrap(path);
-        fis.compile(f);
-        f.writeTo(target);
-        var binary = buf2arr(fs.readFileSync(target));
-        expect(u.isUtf8(binary)).to.be.true;
-        expect(u.read(target)).to.equal('你好,我是gbk');
-        u.del((__dirname+'/tmp/'));
-    });
-
-    it('utf8-gbk',function(){
-        //源文件是utf8，目标文件是gbk
-        fis.config.set('project.charset', 'gbk');
-        var path = __dirname+'/util/encoding/utf8-bom.txt';
-        var target = __dirname+'/tmp/gbk.txt';
-        var f = _.wrap(path);
-        fis.compile(f);
-        f.writeTo(target);
-        var binary = buf2arr(fs.readFileSync(target));
-        expect(u.isUtf8(binary)).to.be.false;
-        //gbk没有©这个字符，所以不能正常显示
-        expect(u.read(target)).to.equal('你好,\u0000\u0000我是€utf8-bom文件');
-        //恢复现场
-        u.del((__dirname+'/tmp/'));
-        fis.config.set('project.charset', 'utf-8');
-    });
-    it('gbk-gbk',function(){
-        //gbk到gbk
-        fis.config.set('project.charset', 'gbk');
-        var path = __dirname+'/util/encoding/gbk.txt';
-        var target = __dirname+'/tmp/gbk.txt';
-        var f = _.wrap(path);
-        fis.compile(f);
-        f.writeTo(target);
-        var binary = buf2arr(fs.readFileSync(target));
-        expect(u.isUtf8(binary)).to.be.false;
-        expect(u.read(target)).to.equal('你好,我是gbk');
-
-        u.del((__dirname+'/tmp/'));
-        fis.config.set('project.charset', 'utf-8');
-    });
-
-});
+//describe('writeTo(target)',function(){
+//    beforeEach(function(){
+//        fis.project.setProjectRoot(__dirname);
+//    });
+//    it('utf8-utf8',function(){
+//        //源文件和目标文件都是utf8
+//        var path = __dirname+'/util/encoding/utf8.txt';
+//        var target = __dirname+'/tmp/utf8.txt';
+//        var f = _.wrap(path);
+//        fis.compile(f);
+//        f.writeTo( __dirname+'/tmp/utf8.txt');
+//        var binary = buf2arr(fs.readFileSync(target));
+//        expect(u.isUtf8(binary)).to.be.true;
+//        expect(fs.readFileSync(target)).to.deep.equal(fs.readFileSync(__dirname+'/util/encoding/utf8.txt'));
+//        u.del((__dirname+'/tmp/'));
+//    });
+//    it('gbk-utf8',function(){
+//        //源文件是gbk，目标文件是utf8
+//        var path = __dirname+'/util/encoding/gbk.txt';
+//        var target = __dirname+'/tmp/utf8.txt';
+//        var f = _.wrap(path);
+//        fis.compile(f);
+//        f.writeTo(target);
+//        var binary = buf2arr(fs.readFileSync(target));
+//        expect(u.isUtf8(binary)).to.be.true;
+//        expect(u.read(target)).to.equal('你好,我是gbk');
+//        u.del((__dirname+'/tmp/'));
+//    });
+//
+//    it('utf8-gbk',function(){
+//        //源文件是utf8，目标文件是gbk
+//        fis.config.set('project.charset', 'gbk');
+//        var path = __dirname+'/util/encoding/utf8-bom.txt';
+//        var target = __dirname+'/tmp/gbk.txt';
+//        var f = _.wrap(path);
+//        fis.compile(f);
+//        f.writeTo(target);
+//        var binary = buf2arr(fs.readFileSync(target));
+//        expect(u.isUtf8(binary)).to.be.false;
+//        //gbk没有©这个字符，所以不能正常显示
+//        expect(u.read(target)).to.equal('你好,\u0000\u0000我是€utf8-bom文件');
+//        //恢复现场
+//        u.del((__dirname+'/tmp/'));
+//        fis.config.set('project.charset', 'utf-8');
+//    });
+//    it('gbk-gbk',function(){
+//        //gbk到gbk
+//        fis.config.set('project.charset', 'gbk');
+//        var path = __dirname+'/util/encoding/gbk.txt';
+//        var target = __dirname+'/tmp/gbk.txt';
+//        var f = _.wrap(path);
+//        fis.compile(f);
+//        f.writeTo(target);
+//        var binary = buf2arr(fs.readFileSync(target));
+//        expect(u.isUtf8(binary)).to.be.false;
+//        expect(u.read(target)).to.equal('你好,我是gbk');
+//
+//        u.del((__dirname+'/tmp/'));
+//        fis.config.set('project.charset', 'utf-8');
+//    });
+//
+//});
 
 describe('getId',function(){
     beforeEach(function(){
@@ -472,90 +472,90 @@ describe('addSameNameRequire(ext)',function(){
 });
 
 
-describe('deliver(output, md5)',function(){
-    beforeEach(function(){
-        fis.project.setProjectRoot(__dirname);
-    });
-    var output =  __dirname+'/file/output';
-    afterEach(function(){
-        u.del(output);
-    });
-    it('md5--js',function(){
-        //output目录不存在应当自动创建
-        var path = __dirname+'/file/ext/modular/js.js';
-        var f = _.wrap(path);
-        f.deliver(output,1);
-        expect(fs.existsSync(output+'/file/ext/modular/js_'+ f.getHash()+'.js')).to.be.true;
-        expect(fs.existsSync(output+'/file/ext/modular/js.js')).to.be.false;
-    });
-
-    it('md5--txt',function(){
-        //txt的文件默认不加hash
-//        var path = __dirname+'/util/base64/logo.txt';
+//describe('deliver(output, md5)',function(){
+//    beforeEach(function(){
+//        fis.project.setProjectRoot(__dirname);
+//    });
+//    var output =  __dirname+'/file/output';
+//    afterEach(function(){
+//        u.del(output);
+//    });
+//    it('md5--js',function(){
+//        //output目录不存在应当自动创建
+//        var path = __dirname+'/file/ext/modular/js.js';
 //        var f = _.wrap(path);
 //        f.deliver(output,1);
-//        expect(fs.existsSync(output+'/util/base64/logo_'+ f.getHash()+'.txt')).to.be.false;
-//        expect(fs.existsSync(output+'/util/base64/logo.txt')).to.be.true;
-    });
-    it('no md5',function(){
-        //output目录不存在
-        var path = __dirname+'/file/ext/modular/js.js';
-        var f = _.wrap(path);
-        f.getContent();
-        f.deliver(output,0);
-        expect(fs.existsSync(output+'/file/ext/modular/js_'+ f.getHash()+'.js')).to.be.false;
-        expect(fs.existsSync(output+'/file/ext/modular/js.js')).to.be.true;
-        var newhash = u.md5(u.read(output+'/file/ext/modular/js.js'));
-        expect(f.getHash()).to.equal(newhash);
-    });
-    it('md5&no md5',function(){
-        //output目录不存在
-        var path = __dirname+'/file/css/test.css';
-        var f = _.wrap(path);
-        f.getContent();
-        f.deliver(output,2);
-        expect(fs.existsSync(output+'/file/css/test_'+ f.getHash()+'.css')).to.be.true;
-        expect(fs.existsSync(output+'/file/css/test.css')).to.be.true;
-    });
-
-    it('deliver 2 times and change contents of the file',function(){
-        //output目录不存在
-        var path = __dirname+'/file/css/test.css';
-        u.write(path,'wawawa');
-        var f = _.wrap(path);
-        //现在必须显式地设置file的内容，否则内容为空
-        f.getContent();
-        f.deliver(output,2);
-        //源文件的hash
-        var hash1 = f.getHash();
-        expect(f.delivered).to.deep.equal([
-            u(__dirname)+"/file/output/file/css/test.css",
-            u(__dirname)+"/file/output/file/css/test_"+hash1+".css"
-        ]);
-
-        //output的hash
-        var hash2 = u.md5(u.read(output+'/file/css/test.css'));
-        u.write(path,'hello world');
-        //修改文件内容后的源文件的hash
-        f = _.wrap(path);
-        /*第二次deliver，文件内容发生变化*/
-        f.deliver(output,2);
-        var newhash = f.getHash();
-        //2次hash值一定不相等
-        expect(newhash!=hash2).to.be.true;
-        expect(f.getContent()).to.equal('hello world');
-
-        /**第二次的新的md5版本的css文件**/
-        expect(fs.existsSync(output+'/file/css/test_'+ newhash+'.css')).to.be.true;
-        expect(fs.existsSync(output+'/file/css/test.css')).to.be.true;
-        //第一次release的css的md5版本
-        expect(fs.existsSync(output+'/file/css/test_'+ hash1+'.css')).to.be.true;
-
-        //第二次的没有md5的js文件与第一次没有md5的js文件不相同
-        expect(u.md5(u.read(output+'/file/css/test.css'))!=hash2).to.be.true;
-        expect(f.delivered).to.deep.equal([
-            u(__dirname)+"/file/output/file/css/test.css",
-            u(__dirname)+"/file/output/file/css/test_"+newhash+".css"
-        ]);
-    });
-});
+//        expect(fs.existsSync(output+'/file/ext/modular/js_'+ f.getHash()+'.js')).to.be.true;
+//        expect(fs.existsSync(output+'/file/ext/modular/js.js')).to.be.false;
+//    });
+//
+//    it('md5--txt',function(){
+//        //txt的文件默认不加hash
+////        var path = __dirname+'/util/base64/logo.txt';
+////        var f = _.wrap(path);
+////        f.deliver(output,1);
+////        expect(fs.existsSync(output+'/util/base64/logo_'+ f.getHash()+'.txt')).to.be.false;
+////        expect(fs.existsSync(output+'/util/base64/logo.txt')).to.be.true;
+//    });
+//    it('no md5',function(){
+//        //output目录不存在
+//        var path = __dirname+'/file/ext/modular/js.js';
+//        var f = _.wrap(path);
+//        f.getContent();
+//        f.deliver(output,0);
+//        expect(fs.existsSync(output+'/file/ext/modular/js_'+ f.getHash()+'.js')).to.be.false;
+//        expect(fs.existsSync(output+'/file/ext/modular/js.js')).to.be.true;
+//        var newhash = u.md5(u.read(output+'/file/ext/modular/js.js'));
+//        expect(f.getHash()).to.equal(newhash);
+//    });
+//    it('md5&no md5',function(){
+//        //output目录不存在
+//        var path = __dirname+'/file/css/test.css';
+//        var f = _.wrap(path);
+//        f.getContent();
+//        f.deliver(output,2);
+//        expect(fs.existsSync(output+'/file/css/test_'+ f.getHash()+'.css')).to.be.true;
+//        expect(fs.existsSync(output+'/file/css/test.css')).to.be.true;
+//    });
+//
+//    it('deliver 2 times and change contents of the file',function(){
+//        //output目录不存在
+//        var path = __dirname+'/file/css/test.css';
+//        u.write(path,'wawawa');
+//        var f = _.wrap(path);
+//        //现在必须显式地设置file的内容，否则内容为空
+//        f.getContent();
+//        f.deliver(output,2);
+//        //源文件的hash
+//        var hash1 = f.getHash();
+//        expect(f.delivered).to.deep.equal([
+//            u(__dirname)+"/file/output/file/css/test.css",
+//            u(__dirname)+"/file/output/file/css/test_"+hash1+".css"
+//        ]);
+//
+//        //output的hash
+//        var hash2 = u.md5(u.read(output+'/file/css/test.css'));
+//        u.write(path,'hello world');
+//        //修改文件内容后的源文件的hash
+//        f = _.wrap(path);
+//        /*第二次deliver，文件内容发生变化*/
+//        f.deliver(output,2);
+//        var newhash = f.getHash();
+//        //2次hash值一定不相等
+//        expect(newhash!=hash2).to.be.true;
+//        expect(f.getContent()).to.equal('hello world');
+//
+//        /**第二次的新的md5版本的css文件**/
+//        expect(fs.existsSync(output+'/file/css/test_'+ newhash+'.css')).to.be.true;
+//        expect(fs.existsSync(output+'/file/css/test.css')).to.be.true;
+//        //第一次release的css的md5版本
+//        expect(fs.existsSync(output+'/file/css/test_'+ hash1+'.css')).to.be.true;
+//
+//        //第二次的没有md5的js文件与第一次没有md5的js文件不相同
+//        expect(u.md5(u.read(output+'/file/css/test.css'))!=hash2).to.be.true;
+//        expect(f.delivered).to.deep.equal([
+//            u(__dirname)+"/file/output/file/css/test.css",
+//            u(__dirname)+"/file/output/file/css/test_"+newhash+".css"
+//        ]);
+//    });
+//});
