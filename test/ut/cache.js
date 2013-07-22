@@ -89,7 +89,7 @@ describe('revert(file)',function(){
         cache.save('hello');
         var obj = {};
         var res = cache.revert(obj);
-        expect(obj.content).to.equal('hello');
+        expect(obj.content.toString('utf8')).to.equal('hello');
         expect(res).to.be.true;
 
     });
