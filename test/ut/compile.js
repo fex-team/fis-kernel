@@ -306,7 +306,7 @@ describe('compile(path, debug)', function () {
      * html中\<script\>标签正则匹配是否成功
     *以标签内是否能inline成功为指导，后面三个例子对应三种情况
      */
-    it('\html-\<script\>-RegularEM',function(){
+    it('html-\<script\>-no space',function(){
         //标签<script></script>
         config.init();
         var f1 = _(__dirname, 'file/embeded1.html'),
@@ -325,7 +325,7 @@ describe('compile(path, debug)', function () {
         expect(c).to.equal('<script>js_inline_test</script>');
     });
 
-    it('\html-\<script \>-RegularEM',function(){
+    it('\html-\<script \>-with a space',function(){
         //标签<script ></script>
         config.init();
         var f1 = _(__dirname, 'file/embeded2.html'),
@@ -344,7 +344,7 @@ describe('compile(path, debug)', function () {
         expect(c).to.equal('<script >js_inline_test</script>');
     });
 
-    it('\html-\<script ***\>-RegularEM',function(){
+    it('\html-\<script ***\>-space and nonspace',function(){
         //标签<script ****></script>
         config.init();
         var f1 = _(__dirname, 'file/embeded3.html'),

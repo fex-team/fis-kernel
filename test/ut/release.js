@@ -160,15 +160,12 @@ describe('release',function(){
                     'photo:widget/c/c.js',
                     'photo:widget/e/e.js',
                     'photo:widget/list/list.css' ]);
-
             expect(ret.src["/widget/c/c.js"].requires).to.deep.equal(
                 ['photo:widget/d/d.js']
             );
-
             expect(ret.src["/index.js"].requires).to.deep.equal(
                 ['photo:index.css']
             );
-
            expect(ret.src["/ui/a/a.js"].requires).to.deep.equal(
                 ['photo:ui/b/b.js']
             );
