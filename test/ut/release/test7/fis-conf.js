@@ -73,6 +73,6 @@ fis.config.merge({
         'static/aio1.js':[
             'ui/**'
         ],
-        'static/aio2.js':"js/**"
+        'static/aio2.js':/js\//
     }
 });
