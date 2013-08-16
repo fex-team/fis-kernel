@@ -67,9 +67,6 @@ fis.time = function(title){
     last = Date.now();
 };
 
-//EventEmitter
-fis.EventEmitter = require('events').EventEmitter;
-
 //log
 fis.log = require('./lib/log.js');
 
