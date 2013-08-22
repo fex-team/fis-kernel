@@ -443,6 +443,18 @@ describe('compile(path, debug)', function () {
         expect(count2).to.equal(7);
     });
 
+    //html嵌入css的通用属性检查
+    it('inline--html,通用属性--css',function(){
+        //清空前面的config参数
+        config.init();
+        var root=__dirname+'/compile/';
+        fis.project.setProjectRoot(root);
+        var f1 = compile(root+'html/main.html');
+        var content = f1.getContent();
+        var expectstr = file.wrap(root+'html/expect.html').getContent();
+        expect(content).to.equal(expectstr);
+    });
+
     it('require--js',function(){
         var root = __dirname+'/compile/';
         fis.project.setProjectRoot(root);
