@@ -52,7 +52,7 @@ describe('toString',function(){
         expect(f.toString()).to.equal('hello.js/hello.css');
         f = _.wrap('d:\\hello.js\\hello.css');
         expect(f.toString()).to.equal('d:/hello.js/hello.css');
-        f = _.wrap('./file/ext/modular/js.js');
+        f = _.wrap('./test/ut/file/ext/modular/js.js');
         expect(f.toString()).to.equal(u(__dirname)+'/file/ext/modular/js.js');
     });
 });
