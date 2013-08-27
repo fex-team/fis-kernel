@@ -80,7 +80,11 @@ describe('save(content, info)',function(){
 });
 
 describe('revert(file)',function(){
+    var targetdir = root+'/target/cache/';
     var fp = root+'/src/c1.js';
+    afterEach(function(){
+        fis.util.del(targetdir);
+    });
     it('general',function(){
         fis.util.write(fp,'F.use(\'c2\');');
         var cache = _(fp);
