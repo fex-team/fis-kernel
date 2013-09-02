@@ -954,6 +954,7 @@ describe('_camelcase(str)',function(){
 
 });
 
+
 describe('_parseUrl(url, opt)',function(){
     it('general',function(){
         var url = 'http://localhost:8080/fis/test';
@@ -1000,14 +1001,222 @@ describe('_parseUrl(url, opt)',function(){
     });
 });
 
+describe('_download(url, [callback], [extract], [opt])',function(){
+    var downdir = __dirname+'/download/';
 
-describe('_upload(url, opt, data, file, callback)',function(){
+    before(function(){
+        //清空fis tmp download dir
+        var files = [];
+        var tmpdir = fis.project.getTempPath('downloads');
+        var path = tmpdir;
+        if( fs.existsSync(path) ) {
+            files = fs.readdirSync(path);
+            files.forEach(function(file,index){
+                var curPath = path + "/" + file;
+                fs.unlinkSync(curPath);
+            });
+        }
+    });
+    it('general', function(done){
+        var url = 'http://10.48.30.87:8088/test/download/downTest01.tar';
+
+        var path = fis.project.getTempPath('downloads');
+        var hash = fis.util.md5( url ,8);
+        _.download(url, function(){
+            expect(path+'/'+hash+'.tar').to.be.exist;
+            done();
+        }) ;
+
+    });
+
+    it('extract', function(done){
+        var name = 'downTest';
+        var url = 'http://10.48.30.87:8088/test/download/'+name+'.tar';
+        var extract = downdir ;
+            _.download(url, function(){
+                var hash = fis.util.md5( url ,8);
+                var path = fis.project.getTempPath('downloads');
+                expect(fs.existsSync(path+'/'+hash+'.tar')).to.be.true;
+                expect(fs.existsSync(extract+'/pressTest')).to.be.true;
+
+                done();
+            }, extract) ;
+
+    });
+
+    it('not_exist', function(done){
+        var url = 'http://10.48.30.87:8088/test/download/downTest05.tar';         //不存在的包
+        var not_exist = 0;
+        _.download(url, function(msg){
+            if(msg == 404)
+                not_exist = 1;
+
+            var path = fis.project.getTempPath('downloads');
+            var hash = fis.util.md5( url ,8);
+            expect(fs.existsSync(path+'/'+hash+'.tar')).to.be.false;
+            expect(not_exist).to.be.equal(1);
+
+            done();
+
+        }) ;
+
+    });
+
+    it('extract-error', function(done){
+        var url = 'http://10.48.30.87:8088/test/download/downTest06.tar';
+        var not_exist = 0;
+        var extract = downdir ;
+        _.download(url, function(msg){
+            if(msg == 404)
+                not_exist = 1;
+
+            var hash = fis.util.md5( url ,8);
+            expect(fs.existsSync(extract+'/'+hash+'.tar')).to.be.false;
+            expect(not_exist).to.be.equal(1);
+
+            done();
+        }, extract,{
+            'data' : "write opt.data!"
+        }) ;
+
+    });
 
 });
 
+describe('_install(name, [version], opt)',function(){
+    var installdir = __dirname+'/install/';
+    after(function(){
+        //清空install文件夹
+        var path = installdir;
 
-describe('_download(url, callback, extract, opt)',function(){
+        var deleteFolderRecursive = function(path) {
+            var files = [];
+            if( fs.existsSync(path) ) {
+                files = fs.readdirSync(path);
+                files.forEach(function(file,index){
+                    var curPath = path + "/" + file;
+                    if(fs.statSync(curPath).isDirectory()) { // recurse
+                        deleteFolderRecursive(curPath);
+                    } else { // delete file
+                        fs.unlinkSync(curPath);
+                    }
+                });
+                fs.rmdirSync(path);
+            }
+        };
 
+        deleteFolderRecursive(path);
+    });
+
+    it('general', function(done){
+        var name = 'installTest';
+        var version = '*';
+        var opt = {
+            'remote' : 'http://10.48.30.87:8088/test/install' ,
+            'extract' : installdir,
+            'done' : function(){
+                var hash = fis.util.md5( opt.remote+'/'+name+'/'+version+'/.tar' ,8);
+                var path = fis.project.getTempPath('downloads');
+                expect(path+'/'+hash+'.tar').to.be.exist;
+                expect(installdir+name).to.be.exist;
+                done();
+            }
+        };
+
+        _.install(name, version, opt);
+
+    });
+
+    it('version-done', function(done){
+        var name = 'installTest';
+        var version = '0.1';
+        var opt = {
+            'remote': 'http://10.48.30.87:8088/test/install',
+            'extract' : installdir,
+            'done': function(){
+                var hash = fis.util.md5( opt.remote+'/'+name+'/'+version+'/.tar' ,8);
+                var path = fis.project.getTempPath('downloads');
+                expect(path+'/'+hash+'.tar').to.be.exist;
+                expect(installdir+name+version).to.be.exist;
+
+                done();
+            }
+        };
+
+        _.install(name, version, opt );
+    });
+
+    it('opt.before', function(done){
+        var gname = 'installTest';
+        var version = '0.2';
+        var opt = {
+            'remote': 'http://10.48.30.87:8088/test/install',
+            'extract' : installdir,
+            'done' : function(name, version){
+                expect(path+'/'+hash+'.tar').to.be.exist;
+                expect(installdir+name+version).to.be.exist;
+
+                done();
+            } ,
+            'before': function(name , version){
+                expect(name).to.be.equal(gname);
+                expect(version).to.be.equal("0.2");
+            }
+        };
+        var hash = fis.util.md5( opt.remote+'/'+gname+'/'+version+'/.tar' ,8);
+        var path = fis.project.getTempPath('downloads');
+
+        _.install(gname, version, opt );
+    });
+
+    it('opt.err_not exist', function(done){
+        var gname = 'installTest';
+        var version = '0.5';                //不存在的版本
+        var opt = {
+            'remote': 'http://10.48.30.87:8088/test/install',
+            'extract' : installdir,
+            'done' : function(name, version){
+                expect(true).to.be.false;
+            } ,
+            'before': function(name , version){
+                expect(name).to.be.equal(gname);
+                expect(version).to.be.equal("0.5");
+            },
+            'error': function(err){
+                var hash = fis.util.md5( opt.remote+'/'+gname+'/'+version+'/.tar' ,8);
+                var path = fis.project.getTempPath('downloads');
+                expect(fs.existsSync(path+'/'+hash+'.tar')).to.be.false;
+                expect(fs.existsSync(installdir+gname+version)).to.be.false;
+
+                done();
+            }
+        };
+        _.install(gname, version, opt );
+
+    });
+
+    it('extract, pkg', function(done){
+        //pkg项目package.json里配置依赖pkg0.2,两个都应该install
+        var name = 'pkgTest';
+        var version = '*';
+        var opt = {
+            'remote': 'http://10.48.30.87:8088/test/install',
+            'extract': installdir,
+            done:function(){
+                var hash = fis.util.md5( opt.remote+'/'+name+'/latest.tar' ,8);
+                var hash_dep = fis.util.md5( opt.remote+'/'+name+'/0.2.tar' ,8);
+                var path = fis.project.getTempPath('downloads');
+                expect(path+'/'+hash+'.tar').to.be.exist;
+                expect(path+'/'+hash_dep+'.tar').to.be.exist;
+                expect(installdir+name).to.be.exist;
+                expect(installdir+dep_name).to.be.exist;
+                done();
+            }
+        };
+        var dep_name = 'pkgTest0.2';
+
+        _.install(name, version, opt);
+    });
 });
 
 describe('_.readJSON(path)',function(){
