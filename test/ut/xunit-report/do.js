@@ -2,7 +2,7 @@
 
 var fs = require('fs');
 var file = "report.xml";
-var report = fs.readFileSync(file);
+var report = fs.readFileSync(file,'utf-8');
 var content = report.toString().split('\n');
 var i = 0;
 for(i=0; i<content.length;i++ ){
@@ -18,4 +18,4 @@ for(i=0; i<content.length;i++ ){
 for(i=0; i<content.length;i++ ){
     content[i] = content[i]+'\n';
 }
-fs.writeFileSync(file, content);
+fs.writeFileSync(file, content,'utf-8');
