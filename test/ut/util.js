@@ -1146,7 +1146,7 @@ describe('_install(name, [version], opt)',function(){
         _.install(name, version, opt );
     });
 
-    it('opt.before', function(done){
+    it('opt.before', function(_done){
         var gname = 'installTest';
         var version = '0.2';
         var opt = {
@@ -1156,7 +1156,7 @@ describe('_install(name, [version], opt)',function(){
                 expect(path+'/'+hash+'.tar').to.be.exist;
                 expect(installdir+name+version).to.be.exist;
 
-                done();
+                _done();
             } ,
             'before': function(name , version){
                 expect(name).to.be.equal(gname);
@@ -1195,7 +1195,7 @@ describe('_install(name, [version], opt)',function(){
 
     });
 
-    it('extract, pkg', function(done){
+    it('extract, pkg', function(_done){
         //pkg项目package.json里配置依赖pkg0.2,两个都应该install
         var name = 'pkgTest';
         var version = '*';
@@ -1210,7 +1210,7 @@ describe('_install(name, [version], opt)',function(){
                 expect(path+'/'+hash_dep+'.tar').to.be.exist;
                 expect(installdir+name).to.be.exist;
                 expect(installdir+dep_name).to.be.exist;
-                done();
+                _done();
             }
         };
         var dep_name = 'pkgTest0.2';
