@@ -1024,6 +1024,7 @@ describe('_download(url, [callback], [extract], [opt])',function(){
         var hash = fis.util.md5( url ,8);
         _.download(url, function(){
             expect(path+'/'+hash+'.tar').to.be.exist;
+            expect(fs.existsSync(extract+'/downTest01')).to.be.true;
             done();
         }) ;
 
@@ -1037,7 +1038,7 @@ describe('_download(url, [callback], [extract], [opt])',function(){
                 var hash = fis.util.md5( url ,8);
                 var path = fis.project.getTempPath('downloads');
                 expect(fs.existsSync(path+'/'+hash+'.tar')).to.be.true;
-                expect(fs.existsSync(extract+'/pressTest')).to.be.true;
+                expect(fs.existsSync(extract+'/downTest')).to.be.true;
 
                 done();
             }, extract) ;
@@ -1202,7 +1203,7 @@ describe('_install(name, [version], opt)',function(){
         var opt = {
             'remote': 'http://10.48.30.87:8088/test/install',
             'extract': installdir,
-            done:function(){
+            'done': function(){
                 var hash = fis.util.md5( opt.remote+'/'+name+'/latest.tar' ,8);
                 var hash_dep = fis.util.md5( opt.remote+'/'+name+'/0.2.tar' ,8);
                 var path = fis.project.getTempPath('downloads');
