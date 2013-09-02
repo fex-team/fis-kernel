@@ -80,7 +80,11 @@ describe('save(content, info)',function(){
 });
 
 describe('revert(file)',function(){
+    var targetdir = root+'/target/cache/';
     var fp = root+'/src/c1.js';
+    afterEach(function(){
+        fis.util.del(targetdir);
+    });
     it('general',function(){
         fis.util.write(fp,'F.use(\'c2\');');
         var cache = _(fp);
@@ -102,7 +106,7 @@ describe('revert(file)',function(){
 
         //修改文件的内容,再cache一下，可以更新cache中的timestamp，从而与cache.save中存储的timestamp不一致，从而revert返回false，缓存失效
         var obj = {};
-        fis.util.touch(fp,12345665);
+        fis.util.touch(fp,(+(new Date()))+ Math.random()*1000000);
         cache = _(fp);
         var res = cache.revert(obj);
         expect(res).to.be.false;
@@ -116,7 +120,7 @@ describe('revert(file)',function(){
         //缓存中设置c1.js的内容为'hello'
         cache.save('hello');
         //修改dep文件的内容,再cache一下，
-        fis.util.touch(root+'/src/c2.css',Math.random()*10000);
+        fis.util.touch(root+'/src/c2.css',(+(new Date()))+ Math.random()*1000000);
         var obj = {};
         cache = _(fp);
         var res = cache.revert(obj);
