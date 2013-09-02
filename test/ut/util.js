@@ -1024,7 +1024,6 @@ describe('_download(url, [callback], [extract], [opt])',function(){
         var hash = fis.util.md5( url ,8);
         _.download(url, function(){
             expect(path+'/'+hash+'.tar').to.be.exist;
-            expect(fs.existsSync(extract+'/downTest01')).to.be.true;
             done();
         }) ;
 
@@ -1034,14 +1033,14 @@ describe('_download(url, [callback], [extract], [opt])',function(){
         var name = 'downTest';
         var url = 'http://10.48.30.87:8088/test/download/'+name+'.tar';
         var extract = downdir ;
-            _.download(url, function(){
-                var hash = fis.util.md5( url ,8);
-                var path = fis.project.getTempPath('downloads');
-                expect(fs.existsSync(path+'/'+hash+'.tar')).to.be.true;
-                expect(fs.existsSync(extract+'/downTest')).to.be.true;
+        _.download(url, function(){
+            var hash = fis.util.md5( url ,8);
+            var path = fis.project.getTempPath('downloads');
+            expect(fs.existsSync(path+'/'+hash+'.tar')).to.be.true;
+            expect(fs.existsSync(extract+'/downTest')).to.be.true;
 
-                done();
-            }, extract) ;
+            done();
+        }, extract) ;
 
     });
 
