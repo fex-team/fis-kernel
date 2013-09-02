@@ -15,4 +15,7 @@ for(i=0; i<content.length;i++ ){
     };
     content[i].replace(reg,callback);
 }
+for(i=0; i<content.length;i++ ){
+    content[i] = content[i]+'\n';
+}
 fs.writeFileSync(file, content);
