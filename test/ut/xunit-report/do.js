@@ -1,4 +1,4 @@
-/*用来删除写到xunit report里的install信息*/
+/* 用来删除写到xunit report里的install信息 */
 
  var fs = require('fs');
  var file = "report.xml";
