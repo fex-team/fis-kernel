@@ -1083,6 +1083,104 @@ describe('_download(url, [callback], [extract], [opt])',function(){
 
 });
 
+describe('_clone(source)',function(){
+    it('source is obj',function(){
+        //empty
+        var source = {};
+        var ret = _.clone(source);
+        expect(ret).to.deep.equal(source);
+        //not empty
+        source = {
+            'a' : 1,
+            'b' : {
+                'c' : 2,
+                'd' : "ef"
+            },
+            'e' : "ijk"
+        };
+        ret = _.clone(source);
+        expect(ret).to.deep.equal(source);
+    });
+    it('source is array', function(){
+        //empty
+        var source = [];
+        var ret = _.clone(source);
+        expect(ret).to.deep.equal(source);
+        //not empty
+        source = [1, 3, "sss"];
+        ret = _.clone(source);
+        expect(ret).to.deep.equal(source);
+    });
+});
+
+
+describe('_upload(url, [opt], [data], content, subpath, callback)',function(){
+    it('general',function(done){
+        var receiver = 'http://web.baidu.com:8088/test/upload/receiver.php';
+        var to = '/home/work/repos/test/upload';
+        var release = '/a.js';
+        var content = 'content';
+        var subpath = '/';
+        _.upload(receiver, null, {to:to+release},content,subpath,
+            function(err,res){
+                if(err || res!='0'){
+                    expect(true).to.be.false;
+                }else{
+                    var file = to+release;
+                    var cont = fs.readFileSync(file, "utf-8");
+                    expect(fs.existsSync(file)).to.be.true;
+                    expect(cont).to.be.equal(content);
+
+                    //delete file
+                    _.del(file);
+                }
+                done();
+            });
+    });
+
+    it('err--not exist', function(done){
+        var receiver = 'http://web.baidu.com:8088/test/receiver.php'; //non exist receiver
+        var to = '/home/work/repos/test/upload';
+        var release = '/a.js';
+        var content = 'content';
+        var subpath = '/';
+        _.upload(receiver, null, {to:to+release}, content, subpath,
+            function(err, res){
+                if(err || res!='0'){
+                    expect(err).to.be.equal(404);
+                }
+                else{
+                    expect(true).to.be.false;
+                }
+                done();
+            });
+    });
+
+    it('content--array',function(done){
+        var receiver = 'http://web.baidu.com:8088/test/upload/receiver.php';
+        var to = '/home/work/repos/test/upload';
+        var release = '/a.js';
+        var content = fs.readFileSync(__dirname+"/upload/a.js","utf-8");
+        var subpath = '/tmp/b.js';
+        _.upload(receiver, null, {to:to+release}, content, subpath,
+            function(err, res){
+                if(err || res!='0'){
+                    expect(true).to.be.false;
+                }
+                else{
+                    var file = to+release;
+                    var cont = fs.readFileSync(file, "utf-8");
+                    expect(fs.existsSync(file)).to.be.true;
+                    expect(cont).to.be.equal(content);
+
+                    //delete file
+                    _.del(file);
+                }
+                done();
+            });
+    });
+});
+
 describe('_install(name, [version], opt)',function(){
     var installdir = __dirname+'/install/';
     after(function(){
