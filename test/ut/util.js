@@ -237,6 +237,56 @@ describe('_.merge(source, target)', function () {
     });
 });
 
+describe('_clone(source)',function(){
+    it('source is obj',function(){
+        //empty
+        var source = {};
+        var ret = _.clone(source);
+        expect(ret).to.deep.equal(source);
+        //not empty
+        source = {
+            'a' : 1,
+            'b' : {
+                'c' : 2,
+                'd' : "ef"
+            },
+            'e' : "ijk"
+        };
+        ret = _.clone(source);
+        expect(ret).to.deep.equal(source);
+    });
+    it('source is array', function(){
+        //empty
+        var source = [];
+        var ret = _.clone(source);
+        expect(ret).to.deep.equal(source);
+        //not empty
+        source = [1, 3, "sss"];
+        ret = _.clone(source);
+        expect(ret).to.deep.equal(source);
+    });
+});
+
+describe('_.escapeShellCmd(str)', function(){
+    it('general', function(){
+        expect(_.escapeShellCmd("")).to.be.equal("");
+        expect(_.escapeShellCmd(" ")).to.be.equal("\" \"");
+        expect(_.escapeShellCmd("abc")).to.be.equal("abc");
+        expect(_.escapeShellCmd("ab c")).to.be.equal("ab\" \"c");
+        expect(_.escapeShellCmd("abc ")).to.be.equal("abc\" \"");
+        expect(_.escapeShellCmd(" abc")).to.be.equal("\" \"abc");
+    });
+});
+
+describe('_.escapeShellArg(cmd)', function(){
+    it('general', function(){
+        expect(_.escapeShellArg("")).to.be.equal("\"\"");
+        expect(_.escapeShellArg(" ")).to.be.equal("\" \"");
+        expect(_.escapeShellArg("abc")).to.be.equal("\"abc\"");
+        expect(_.escapeShellArg("abc ")).to.be.equal("\"abc \"");
+    });
+});
+
 describe('_.stringQuote(str, [quotes], [trim])', function () {
     it('1 param', function () {
         var str1 = ' "helloworld" ';
@@ -368,11 +418,14 @@ describe('_.isAbsolute(path)', function () {
            expect(_.isAbsolute('./work/hello')).to.be.false;
            expect(_.isAbsolute('work/hello')).to.be.false;
        }else{
+           expect(_.isAbsolute('/')).to.be.true;
+           expect(_.isAbsolute('~')).to.be.true;
            expect(_.isAbsolute('/home/work/')).to.be.true;
            expect(_.isAbsolute('./home/work/')).to.be.false;
            expect(_.isAbsolute('home/work')).to.be.false;
        }
     });
+
 });
 
 describe('_.isFile(path)', function () {
@@ -457,6 +510,8 @@ describe('_.isTextFile(path)', function () {
         expect(_.isTextFile('a.js.csss')).to.be.false;
         config.set('project.fileType.text', ['csss']);
         expect(_.isTextFile('a.js.csss')).to.be.true;
+        config.set('project.fileType.text', 'csss');
+        expect(_.isTextFile('a.js.csss')).to.be.true;
         config.set({});
         expect(_.isTextFile('a.js.csss')).to.be.false;
     });
@@ -475,6 +530,8 @@ describe('_.isImageFile(path)', function () {
         config.set('project.fileType.bcd', ['jpee']);
         expect(_.isImageFile('a.js.jpee')).to.be.false;
         config.set('project.fileType.image', ['jpee']);
+        expect(_.isImageFile('a.js.jpee')).to.be.true;
+        config.set('project.fileType.image', 'jpee');
         expect(_.isImageFile('a.js.jpee')).to.be.true;
         config.set({});
         expect(_.isImageFile('a.js.jpee')).to.be.false;
@@ -517,6 +574,16 @@ describe('_.base64(data)', function () {
             data = fs.readFileSync(root + '/logo.txt').toString();
         expect(_.base64(source)).to.equal(data);
     });
+    it('array', function () {
+        //octets array
+        var str = 'fis';
+        var octent_array = [];
+        for(var i = 0, length = str.length; i < length; i++) {
+            var code = str.charCodeAt(i);
+            octent_array.push( code & 0xff);
+        }
+        expect(_.base64(octent_array)).to.be.equal('Zmlz');
+    });
 });
 
 describe('_.mkdir(path1, [mode])', function () {
@@ -540,6 +607,16 @@ describe('_.mkdir(path1, [mode])', function () {
         expect(_.isDir(__dirname + '/mkdir/a/b')).to.be.false;
         expect(_.isDir(__dirname + '/mkdir/a/b/c')).to.be.false;
         expect(_.isDir(__dirname + '/mkdir/a/b/c/d')).to.be.false;
+    });
+});
+
+describe('_.toEncoding(str, encoding)', function(){
+    it('general', function(){
+        //default utf-8
+        expect(_.toEncoding('你好').toString()).to.be.equal('你好');
+        expect(_.toEncoding('A').toString()).to.be.equal('A');
+        expect(_.toEncoding('').toString()).to.be.equal('');
+        expect(_.toEncoding(' ').toString()).to.be.equal(' ');
     });
 });
 
@@ -894,6 +971,14 @@ describe('_ext(str)',function(){
         expect(_.ext('a').rest).to.equal('a');
     });
 
+    it('/',function(){
+        expect(_.ext('/').ext).to.equal('');
+        expect(_.ext('/').filename).to.equal('');
+        expect(_.ext('/').basename).to.equal('');
+        expect(_.ext('/').dirname).to.equal('/');
+        expect(_.ext('/').rest).to.equal('/');
+    });
+
 });
 //get请求中的query
 describe('_query(str)',function(){
@@ -950,10 +1035,17 @@ describe('_camelcase(str)',function(){
         expect(_.camelcase(str)).to.equal('StrReplace.js');
         str = 'strreplace.js';
         expect(_.camelcase(str)).to.equal('Strreplace.js');
+        str = 'strre place.js';
+        expect(_.camelcase(str)).to.equal('StrrePlace.js');
+//        str = ' strreplace.js';
+//        expect(_.camelcase(str)).to.equal('Strreplace.js');   //error call toUpperCase of undefined
     });
 
+    it('str is empty',function(){
+        expect(_.camelcase('')).to.equal('');
+//        expect(_.camelcase(' ')).to.equal(' ');   //error call toUpperCase of undefined
+    });
 });
-
 
 describe('_parseUrl(url, opt)',function(){
     it('general',function(){
@@ -1083,37 +1175,6 @@ describe('_download(url, [callback], [extract], [opt])',function(){
 
 });
 
-describe('_clone(source)',function(){
-    it('source is obj',function(){
-        //empty
-        var source = {};
-        var ret = _.clone(source);
-        expect(ret).to.deep.equal(source);
-        //not empty
-        source = {
-            'a' : 1,
-            'b' : {
-                'c' : 2,
-                'd' : "ef"
-            },
-            'e' : "ijk"
-        };
-        ret = _.clone(source);
-        expect(ret).to.deep.equal(source);
-    });
-    it('source is array', function(){
-        //empty
-        var source = [];
-        var ret = _.clone(source);
-        expect(ret).to.deep.equal(source);
-        //not empty
-        source = [1, 3, "sss"];
-        ret = _.clone(source);
-        expect(ret).to.deep.equal(source);
-    });
-});
-
-
 describe('_upload(url, [opt], [data], content, subpath, callback)',function(){
     it('general',function(done){
         var receiver = 'http://web.baidu.com:8088/test/upload/receiver.php';
@@ -1157,14 +1218,18 @@ describe('_upload(url, [opt], [data], content, subpath, callback)',function(){
     });
 
     it('content--array',function(done){
-        var receiver = 'http://web.baidu.com:8088/test/upload/receiver.php';
-        var to = '/home/work/repos/test/upload';
+        var receiver = 'http://localhost/upload/receiver_get.php?id=123';
+        var to = 'c:/xampp/htdocs/upload';
         var release = '/a.js';
         var content = fs.readFileSync(__dirname+"/upload/a.js","utf-8");
         var subpath = '/tmp/b.js';
-        _.upload(receiver, null, {to:to+release}, content, subpath,
+        var opt = {
+            'method' : 'GET'
+        };
+        _.upload(receiver, opt, {to:to+release}, content, subpath,
             function(err, res){
                 if(err || res!='0'){
+                    console.log(res)
                     expect(true).to.be.false;
                 }
                 else{
