@@ -1223,7 +1223,7 @@ describe('_upload(url, [opt], [data], content, subpath, callback)',function(){
         var release = '/a.js';
         var content = fs.readFileSync(__dirname+"/upload/a.js","utf-8");
         var subpath = '/tmp/b.js';
-        _.upload(receiver, opt, {to:to+release}, content, subpath,
+        _.upload(receiver, null, {to:to+release}, content, subpath,
             function(err, res){
                 if(err || res!='0'){
                     expect(true).to.be.false;
