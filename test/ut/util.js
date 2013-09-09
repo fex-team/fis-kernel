@@ -1218,18 +1218,14 @@ describe('_upload(url, [opt], [data], content, subpath, callback)',function(){
     });
 
     it('content--array',function(done){
-        var receiver = 'http://localhost/upload/receiver_get.php?id=123';
-        var to = 'c:/xampp/htdocs/upload';
+        var receiver = 'http://web.baidu.com:8088/test/upload/receiver.php';
+        var to = '/home/work/repos/test/upload';
         var release = '/a.js';
         var content = fs.readFileSync(__dirname+"/upload/a.js","utf-8");
         var subpath = '/tmp/b.js';
-        var opt = {
-            'method' : 'GET'
-        };
         _.upload(receiver, opt, {to:to+release}, content, subpath,
             function(err, res){
                 if(err || res!='0'){
-                    console.log(res)
                     expect(true).to.be.false;
                 }
                 else{
