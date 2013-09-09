@@ -1246,25 +1246,7 @@ describe('_install(name, [version], opt)',function(){
     var installdir = __dirname+'/install/';
     after(function(){
         //清空install文件夹
-        var path = installdir;
-
-        var deleteFolderRecursive = function(path) {
-            var files = [];
-            if( fs.existsSync(path) ) {
-                files = fs.readdirSync(path);
-                files.forEach(function(file,index){
-                    var curPath = path + "/" + file;
-                    if(fs.statSync(curPath).isDirectory()) { // recurse
-                        deleteFolderRecursive(curPath);
-                    } else { // delete file
-                        fs.unlinkSync(curPath);
-                    }
-                });
-                fs.rmdirSync(path);
-            }
-        };
-
-        deleteFolderRecursive(path);
+        fis.cache.clean(installdir);
     });
 
     it('general', function(done){
