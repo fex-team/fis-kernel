@@ -30,6 +30,7 @@ describe('compile(path, debug)', function () {
         fis.project.setTempRoot(root+'/target/');
         _.copy(root+'/fis-modular-modular',root+'/../../../node_modules/fis-preprocessor-modular');
         _.copy(root+'/fis-lint-lint',root+'/../../../node_modules/fis-lint-lint');
+        _.copy(root+'/fis-test-test',root+'/../../../node_modules/fis-test-test');
         _.copy(root+'/fis-optimizer-optimizer',root+'/../../../node_modules/fis-optimizer-optimizer');
         _.copy(root+'/fis-parser-parser',root+'/../../../node_modules/fis-parser-parser');
         //设置各个处理器的路径，对应于compile.js，modules.parser.js,module.modular.js
@@ -42,6 +43,9 @@ describe('compile(path, debug)', function () {
             },
             lint :{
                 js :'lint'
+            },
+            test :{
+                js:'test'
             },
             optimizer :{
                 js :'optimizer'
@@ -71,6 +75,7 @@ describe('compile(path, debug)', function () {
         compile.clean();
         _.del(root+'/../../../node_modules/fis-preprocessor-modular');
         _.del(root+'/../../../node_modules/fis-lint-lint');
+        _.del(root+'/../../../node_modules/fis-test-test');
         _.del(root+'/../../../node_modules/fis-optimizer-optimizer');
         _.del(root+'/../../../node_modules/fis-parser-parser');
     });
@@ -80,6 +85,7 @@ describe('compile(path, debug)', function () {
             optimize:true,
             hash:true,
             lint :true,
+            test :true,
             domain:true
         });
         tempfiles = [];
@@ -106,7 +112,25 @@ describe('compile(path, debug)', function () {
         expect(c).to.equal(content + added);
     });
 
+    it('not compile', function(){
+        var f = _(__dirname, 'file/general.js'),
+            content = 'var abc = 123;';
+        _.write(f, content);
+        f = file(f);
+        f.useCompile = false;
+        var c = compile(f).getContent().toString();
+        expect(c).to.equal(content);
 
+    });
+
+    it('class File', function(){
+        var f = _(__dirname, 'file/a.js'),
+            content = 'var abc = 123;';
+        f = fis.file.wrap(f);
+        f.setContent(content);
+        var c = compile(f).getContent();
+        expect(c).to.equal(content+added);
+    });
 
     it('embed--2 embed', function(){
         //f1内嵌f2，f2内嵌f3
@@ -198,6 +222,41 @@ describe('compile(path, debug)', function () {
         c = compile(f3).getContent();
         expect(c).to.equal('I am embed2.js;' + content2 + modstr +optstr + parstr + modstr +optstr);
     });
+
+    it('embed--isAbusolute', function () {
+        var f1 = _(__dirname, 'file/embed.js'),
+            f2 = _(__dirname, 'file/embed.coffee'),
+            content1 = 'I am embed.js;<[{embed('+__dirname+'/file/embed.coffee)}]>',
+            content2 = 'I am embed.coffee;';
+        _.write(f1, content1);
+        _.write(f2, content2);
+        tempfiles.push(f1);
+        tempfiles.push(f2);
+        var c = compile(f1).getContent();
+        expect(c).to.equal('I am embed.js;' + content2 + modstr +optstr + parstr + modstr +optstr);
+        //from cache
+        c = compile(f1).getContent();
+        expect(c).to.equal('I am embed.js;' + content2 + modstr +optstr + parstr + modstr +optstr);
+    });
+
+    it('embed with require', function(){
+        var f1 = _(__dirname, 'file/embed.js'),
+            f2 = _(__dirname, 'file/embed.css'),
+            content1 = 'I am embed.js;<[{embed(./embed.css)}]>',
+            content2 = 'I am embed.css;<[{require(ext/lint/lint.js)}]>';
+        _.write(f1, content1);
+        _.write(f2, content2);
+        tempfiles.push(f1);
+        tempfiles.push(f2);
+        var c = compile(f1).getContent();
+        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.js' + added);
+        expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
+        //from cache
+        c = compile(f1).getContent();
+        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.js' + added);
+        expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
+    });
+
     it('require', function () {
         var f1 = _(__dirname, 'file/require.js'),
             content1 = 'I <[{require(ext/lint/lint.js)}]>am re<[{require(ext/modular/js.js)}]>quire.js;<[{require(ext/lint/lint.js)}]>.';
@@ -246,6 +305,7 @@ describe('compile(path, debug)', function () {
         expect(c).to.equal('http://coffee.baidu.com//static/curi_'+hash+'.js?i=2I am uri.js;http://coffee.baidu.com//static/curi_'+hash+'.js?i=1./static/uri.php?i=4.'+parstr +modstr);
         //debug
         compile.setup({
+            unique:true,
             debug: true,
             optimize: false,
             hash: true,

@@ -1,10 +1,10 @@
-/*
- * fis
- * http://fis.baidu.com/
- */
+    /*
+     * fis
+     * http://fis.baidu.com/
+     */
 
-'use strict';
+    'use strict';
 
-module.exports = function(content){
-    return content + '--parser--';
-};
+    module.exports = function(content){
+        return content + '--parser--';
+    };
