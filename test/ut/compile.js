@@ -15,6 +15,7 @@ var fis = require('../../fis-kernel.js'),
     expect = require('chai').expect;
 var root = __dirname + '/file';
 var compile = fis.compile;
+var fs = require('fs');
 describe('compile(path, debug)', function () {
     var conf = config.get(),
         tempfiles = [];
@@ -255,6 +256,20 @@ describe('compile(path, debug)', function () {
         c = compile(f1).getContent();
         expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.js' + added);
         expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
+    });
+
+    it('embed img', function(){
+        var f1 = _(__dirname, 'file/embed.js'),
+            f2 = _(__dirname, 'file/embed/embed.txt'),
+            content1 = 'I am embed.js;<[{embed(./embed/embed.gif)}]>',
+            content2 = fs.readFileSync(f2, "utf-8");
+        _.write(f1, content1);
+        tempfiles.push(f1);
+        var c = compile(f1).getContent();
+        expect(c).to.equal('I am embed.js;data:image/gif;base64,'+ content2 + added);
+        //from cache
+        c = compile(f1).getContent();
+        expect(c).to.equal('I am embed.js;data:image/gif;base64,' + content2 + added);
     });
 
     it('require', function () {
