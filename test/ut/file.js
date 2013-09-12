@@ -42,7 +42,6 @@ describe('exists',function(){
     });
 });
 
-
 describe('toString',function(){
     beforeEach(function(){
         fis.project.setProjectRoot(__dirname);
@@ -251,7 +250,8 @@ describe('getUrl(withHash, withDomain)',function(){
         var path = __dirname+'/util/encoding/gbk.txt?__inline';
         var f = _.wrap(path);
         var url = f.getUrl();
-        expect(url).to.equal('/util/encoding/gbk.txt?__inline');
+        expect(url).to.equal('/util/encoding/gbk.txt?__inl' +
+            'ine');
         //js、css、图片文件
         path = __dirname+'/file/ext/modular/js.js?__inline';
         f = _.wrap(path);
@@ -284,7 +284,6 @@ describe('getUrl(withHash, withDomain)',function(){
         f = _.wrap(path);
         url = f.getUrl(false,true);
         expect(url).to.equal('www.baidu.com/file/ext/modular/js.js?__inline');
-
     });
 
     it('with domain——domain是对象，且键是图片，对图片的通用处理',function(){
@@ -315,6 +314,100 @@ describe('getUrl(withHash, withDomain)',function(){
         url = f.getUrl(false,true);
         //同级目录下没有css文件，所以不会被命中
         expect(url).to.equal('/file/css/test.css?__inline');
+    });
+
+    it('with domains',function(){
+        fis.config.init();
+        fis.config.set('roadmap.domain',{
+            'image': ['img1.baidu.com', 'img2.baidu.com', 'img3.baidu.com', 'img4.baidu.com'],
+            '**.js': ['js1.baidu.com', 'js2.baidu.com', 'js3.baidu.com'],
+            '*.css': ['css1.baidu.com', 'css2.baidu.com']
+        });
+
+        //js、css、图片文件
+        var path = __dirname+'/util/img/data.png';
+        f = _.wrap(path);
+        var url1 = f.getUrl(false,true);
+        f = _.wrap(path);
+        var url2 = f.getUrl(false,true);
+        expect(url1).to.equal(url2);
+
+        path = __dirname+'/file/ext/lint/lint.js';
+        f = _.wrap(path);
+        url1 = f.getUrl(false,true);
+        f = _.wrap(path);
+        url2 = f.getUrl(false,true);
+        expect(url1).to.equal(url2);
+
+        path = __dirname+'/file/css/test.css?__inline';
+        f = _.wrap(path);
+        url1 = f.getUrl(false,true);
+        f = _.wrap(path);
+        url2 = f.getUrl(false,true);
+        expect(url1).to.equal(url2);
+    });
+
+    it('with no release',function(){
+        config.set('roadmap', {
+            path : [{
+                    "reg" : /^\/(.*)/,
+                    "release" : "static/$1"
+                }]
+        });
+        //js
+        fis.config.set('roadmap.domain','www.baidu.com');
+        path = __dirname+'/file/ext/modular/js.js?__inline';
+        f = _.wrap(path);
+        url = f.getUrl(false,true);
+        expect(url).to.equal('www.baidu.com/static/file/ext/modular/js.js?__inline');
+    });
+
+    it('with release false',function(){
+        config.set('roadmap', {
+            path : [{
+                "reg" : '**.js',
+                "release" : '/static$&'
+            },
+                {
+                "reg" : /^\/(.*)/,
+                "release" : false
+            }]
+        });
+        //js
+//        fis.config.set('roadmap.domain','www.baidu.com');
+        path = __dirname+'/file/ext/modular/js.js';
+        f = _.wrap(path);
+        expect(fs.existsSync(__dirname+'/file/ext/modular/static/js.js')).to.be.ture;
+        //html
+        path = __dirname+'/file/ext/modular/html.html';
+        f = _.wrap(path);
+        expect(fs.existsSync(__dirname+'/file/ext/modular/static/html.html')).to.be.false;
+    });
+
+    //array
+    it('with domain——domain是数组',function(){
+        //非js、css、图片文件
+        fis.config.init();
+        var path = __dirname+'/util/img/data.png';
+        var f = _.wrap(path);
+        var url = f.getUrl(false,true);
+        expect(url).to.equal('/util/img/data.png');
+        fis.config.set('roadmap.domain',[
+            'img.baidu.com'
+        ]);
+        f = _.wrap(path);
+        url = f.getUrl(false,true);
+        expect(url).to.equal('img.baidu.com/util/img/data.png');
+
+        fis.config.set('roadmap.domain',[
+            'js.baidu.com',
+            'img.baidu.com',
+            'css.baidu.com'
+        ]);
+        path = __dirname+'/file/ext/lint/lint.js';
+        f = _.wrap(path);
+        url = f.getUrl(false,true);
+        expect(url).to.equal('js.baidu.com/file/ext/lint/lint.js');
     });
 
 
@@ -367,6 +460,14 @@ describe('getHashRelease',function(){
         url = f.getHashRelease();
         hash = u.md5(f.getContent());
         expect(url).to.equal('/img/w3c_home_'+ hash+'.gif');
+    });
+    it('without hash',function(){
+        //html, not release
+        var path = __dirname+'/file/ext/modular/html.html';
+        var f = _.wrap(path);
+        var url = f.getHashRelease();
+        var hash = u.md5(f.getContent());
+        expect(url).to.equal('/file/ext/modular/html.html');
     });
 
 });
@@ -425,7 +526,7 @@ describe('removeRequire(id)',function(){
         fis.project.setProjectRoot(__dirname);
     });
     //第一次加
-    var path = __dirname+'/file/ext/modular/js.js';
+    var path = __dirname+'file/ext/modular/js.js';
     var f = _.wrap(path);
     f.addRequire(__dirname+'/file/css/test.css');
     f.addRequire(__dirname+'/file/ext/parser/js.js  ');
@@ -461,12 +562,12 @@ describe('addSameNameRequire(ext)',function(){
         fis.config.set('roadmap.ext',{
             'less':'css'
         });
-        var path = __dirname+'/file/css/test.js';
+        var path = __dirname+'/file/ext/modular/js.js';
         var f = _.wrap(path);
         //存在同名的css文件
         f.addSameNameRequire('.css');
         expect(f.requires).to.deep.equal([
-            'file/css/test.css'
+            'file/ext/modular/js.less'
         ]);
     });
 });
