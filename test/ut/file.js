@@ -316,7 +316,7 @@ describe('getUrl(withHash, withDomain)',function(){
         expect(url).to.equal('/file/css/test.css?__inline');
     });
 
-    it('with domains',function(){
+    it('with domains——domain array',function(){
         fis.config.init();
         fis.config.set('roadmap.domain',{
             'image': ['img1.baidu.com', 'img2.baidu.com', 'img3.baidu.com', 'img4.baidu.com'],
@@ -326,7 +326,7 @@ describe('getUrl(withHash, withDomain)',function(){
 
         //js、css、图片文件
         var path = __dirname+'/util/img/data.png';
-        f = _.wrap(path);
+        var f = _.wrap(path);
         var url1 = f.getUrl(false,true);
         f = _.wrap(path);
         var url2 = f.getUrl(false,true);
@@ -357,7 +357,7 @@ describe('getUrl(withHash, withDomain)',function(){
         //js
         fis.config.set('roadmap.domain','www.baidu.com');
         path = __dirname+'/file/ext/modular/js.js?__inline';
-        f = _.wrap(path);
+        var f = _.wrap(path);
         url = f.getUrl(false,true);
         expect(url).to.equal('www.baidu.com/static/file/ext/modular/js.js?__inline');
     });
@@ -376,7 +376,7 @@ describe('getUrl(withHash, withDomain)',function(){
         //js
 //        fis.config.set('roadmap.domain','www.baidu.com');
         path = __dirname+'/file/ext/modular/js.js';
-        f = _.wrap(path);
+        var f = _.wrap(path);
         expect(fs.existsSync(__dirname+'/file/ext/modular/static/js.js')).to.be.ture;
         //html
         path = __dirname+'/file/ext/modular/html.html';
