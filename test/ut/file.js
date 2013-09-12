@@ -358,7 +358,7 @@ describe('getUrl(withHash, withDomain)',function(){
         fis.config.set('roadmap.domain','www.baidu.com');
         path = __dirname+'/file/ext/modular/js.js?__inline';
         var f = _.wrap(path);
-        url = f.getUrl(false,true);
+        var url = f.getUrl(false,true);
         expect(url).to.equal('www.baidu.com/static/file/ext/modular/js.js?__inline');
     });
 
