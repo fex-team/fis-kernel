@@ -88,12 +88,18 @@ var expect = require('chai').expect;
                 "test1"
             ];
             expect(uri.replaceProperties(source,matches)).to.equal("hhtest1hh<{11hh");
+//            source = "hh$&hh${123}hh";
+//            matches = [
+//                "test1"
+//            ];
+//            fis.config.set('123', '$&');
+//            expect(uri.replaceProperties(source,matches)).to.equal("hhtest1hhtest1hh");
+
             source = "hh$&hh${123}hh";
             matches = [
-                "test1"
+                "test1${123}"
             ];
-            fis.config.set('123', '$&');
-            expect(uri.replaceProperties(source,matches)).to.equal("hhtest1hhtest1hh");
+            expect(uri.replaceProperties(source,matches)).to.equal("hhtest1<{11hh<{11hh");
 
             fis.config.set('123', '<{11');
             source = [
@@ -136,6 +142,25 @@ var expect = require('chai').expect;
                 aa:"hhtest1hh<{11hh",
                 bb:{
                     aa:"hhtest1hh<{11hh",
+                    bb:"aa$aa"
+                }
+            };
+            expect(uri.replaceProperties(source,matches)).to.deep.equal(expectResult);
+
+            source = {
+                aa:"hh$&hh${123}hh",
+                bb:{
+                    aa:"hh$&hh${123}hh",
+                    bb:"aa$aa"
+                }
+            };
+            matches = [
+                "test1${123}"
+            ];
+            expectResult = {
+                aa:"hhtest1<{11hh<{11hh",
+                bb:{
+                    aa:"hhtest1<{11hh<{11hh",
                     bb:"aa$aa"
                 }
             };
