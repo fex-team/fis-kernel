@@ -28,16 +28,19 @@ describe('compile(path, debug)', function () {
     before(function(){
         config.init();
         fis.project.setProjectRoot(root);
-        fis.project.setTempRoot(root+'/target/');
+        fis.project.setTempRoot(root+'/target/');       //cache clean dir
         _.copy(root+'/fis-modular-modular',root+'/../../../node_modules/fis-preprocessor-modular');
         _.copy(root+'/fis-lint-lint',root+'/../../../node_modules/fis-lint-lint');
         _.copy(root+'/fis-test-test',root+'/../../../node_modules/fis-test-test');
         _.copy(root+'/fis-optimizer-optimizer',root+'/../../../node_modules/fis-optimizer-optimizer');
         _.copy(root+'/fis-parser-parser',root+'/../../../node_modules/fis-parser-parser');
+        _.copy(root+'/fis-parser-options',root+'/../../../node_modules/fis-parser-options');
+        _.copy(root+'/fis-config-test',root+'/../../../node_modules/fis-config-test');
         //设置各个处理器的路径，对应于compile.js，modules.parser.js,module.modular.js
         config.set('modules', {
             parser : {
-                js : 'parser'
+                js : 'parser',
+                css: 'options'
             },
             preprocessor : {
                 js : 'modular'
@@ -74,11 +77,14 @@ describe('compile(path, debug)', function () {
         //恢复环境
         config.set(conf);
         compile.clean();
+        fis.cache.clean(root+'/target');
         _.del(root+'/../../../node_modules/fis-preprocessor-modular');
         _.del(root+'/../../../node_modules/fis-lint-lint');
         _.del(root+'/../../../node_modules/fis-test-test');
         _.del(root+'/../../../node_modules/fis-optimizer-optimizer');
         _.del(root+'/../../../node_modules/fis-parser-parser');
+        _.del(root+'/../../../node_modules/fis-parser-options');
+        _.del(root+'/../../../node_modules/fis-config-test');
     });
     beforeEach(function(){
         compile.setup({
@@ -97,6 +103,7 @@ describe('compile(path, debug)', function () {
             _.del(root+'/target/');
         });
     });
+
     it('general', function(){
         var f = _(__dirname, 'file/general.js'),
             content = 'var abc = 123;';
@@ -250,12 +257,40 @@ describe('compile(path, debug)', function () {
         tempfiles.push(f1);
         tempfiles.push(f2);
         var c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.js' + added);
+        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.jsTEST' + added);
         expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
         //from cache
         c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.js' + added);
+        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.jsTEST' + added);
         expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
+    });
+
+    it('setting instead of defaultOptions', function(){
+        config.set('settings', {
+            parser : {
+                'options':{
+                    test : '_TEST'
+                }
+            }
+        });
+        var f1 = _(__dirname, 'file/embed.js'),
+            f2 = _(__dirname, 'file/embed.css'),
+            content1 = 'I am embed.js;<[{embed(./embed.css)}]>',
+            content2 = 'I am embed.css;<[{require(ext/lint/lint.js)}]>';
+        _.write(f1, content1);
+        _.write(f2, content2);
+        tempfiles.push(f1);
+        tempfiles.push(f2);
+        var c = compile(f1).getContent();
+        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.js_TEST' + added);
+        expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
+        //from cache
+        c = compile(f1).getContent();
+        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.js_TEST' + added);
+        expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
+
+        var processor = config.require("test");
+        expect(processor.data.settings).to.equal(config.get('settings'));
     });
 
     it('embed img', function(){
@@ -640,4 +675,12 @@ describe('compile(path, debug)', function () {
 
     });
 
+    it('clean(name)', function(){
+        fis.util.mkdir(root+'/target/cache/compile/tmp');
+        expect(fis.util.exists(root+'/target/cache/compile/tmp')).to.be.true;
+        compile.clean('tmp');
+        expect(fis.util.exists(root+'/target/cache/compile/tmp')).to.be.false;
+        expect(fis.util.exists(root+'/target/cache/compile')).to.be.true;
+        fis.cache.clean(root+'/target');
+    });
 });
