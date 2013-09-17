@@ -35,6 +35,7 @@ describe('compile(path, debug)', function () {
         _.copy(root+'/fis-optimizer-optimizer',root+'/../../../node_modules/fis-optimizer-optimizer');
         _.copy(root+'/fis-parser-parser',root+'/../../../node_modules/fis-parser-parser');
         _.copy(root+'/fis-parser-options',root+'/../../../node_modules/fis-parser-options');
+        _.copy(root+'/fis-config-test',root+'/../../../node_modules/fis-config-test');
         //设置各个处理器的路径，对应于compile.js，modules.parser.js,module.modular.js
         config.set('modules', {
             parser : {
@@ -83,6 +84,7 @@ describe('compile(path, debug)', function () {
         _.del(root+'/../../../node_modules/fis-optimizer-optimizer');
         _.del(root+'/../../../node_modules/fis-parser-parser');
         _.del(root+'/../../../node_modules/fis-parser-options');
+        _.del(root+'/../../../node_modules/fis-config-test');
     });
     beforeEach(function(){
         compile.setup({
@@ -286,6 +288,9 @@ describe('compile(path, debug)', function () {
         c = compile(f1).getContent();
         expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.js_TEST' + added);
         expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
+
+        var processor = config.require("test");
+        expect(processor.data.settings).to.equal(config.get('settings'));
     });
 
     it('embed img', function(){
