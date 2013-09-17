@@ -1,13 +1,12 @@
 fis.config.merge({
     namespace : 'photo',
-    modules : {
-        //打包调用fis-packager-your_packager插件进行处理
-        packager : 'map'
+    "modules" : {
+        "packager" : "map"
     },
     roadmap : {
         domain : {
-            '**.js' : 'http://img.baidu.com',
-            '**.css' : 'http://css.baidu.com'
+            '*.js' : 'http://img.baidu.com',
+            '*.css' : 'http://css.baidu.com'
         },
         path : [
             {
@@ -21,11 +20,12 @@ fis.config.merge({
             {
                 reg : /^\/widget\/.*\.(js|css)$/i,
                 isMod : true,
-                release : '/static/${namespace}$&',
-                extras : {
-                    say : '123',
-                    hi  : 'wenmin'
-                }
+                release : '/static/${namespace}$&'
+            },
+            {
+                reg : /^\/ui\/.*\.(js|css)$/i,
+                isMod : true,
+                release : '/static/${namespace}$&'
             },
             {
                 reg : /^\/widget\/(.*\.tpl)$/i,
@@ -48,12 +48,13 @@ fis.config.merge({
                 reg : /^.*$/,
                 release : '/static/${namespace}$&'
             }
+
         ]
     },
     settings : {
-        postprocessor  : {
-            jswrapper  : {
-                type : 'amd'
+        modular : {
+            reqlang : {
+                wrap : 'amd'
             }
         }
     },
@@ -62,11 +63,5 @@ fis.config.merge({
             receiver : 'http://zhangyunlong.fe.baidu.com/receiver.php',
             to : '/home/zhangyunlong/public_html'
         }
-    },
-    pack : {
-        'aio.js' : [
-            'widget/comp/comp.js',
-            'widget/list/list.js'
-        ]
     }
 });

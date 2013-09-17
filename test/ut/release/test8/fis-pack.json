@@ -1,0 +1,10 @@
+{
+    "static/aio.js" : [
+        "widget/comp/comp.js",
+        "widget/list/list.js"
+    ],
+    "static/aio1.js":[
+        "ui/**"
+    ],
+    "static/aio2.js": "/js\//"
+}
