@@ -28,7 +28,7 @@ describe('compile(path, debug)', function () {
     before(function(){
         config.init();
         fis.project.setProjectRoot(root);
-        fis.project.setTempRoot(root+'/target/');
+        fis.project.setTempRoot(root+'/target/');       //cache clean dir
         _.copy(root+'/fis-modular-modular',root+'/../../../node_modules/fis-preprocessor-modular');
         _.copy(root+'/fis-lint-lint',root+'/../../../node_modules/fis-lint-lint');
         _.copy(root+'/fis-test-test',root+'/../../../node_modules/fis-test-test');
@@ -74,6 +74,7 @@ describe('compile(path, debug)', function () {
         //恢复环境
         config.set(conf);
         compile.clean();
+        fis.cache.clean(root+'/target');
         _.del(root+'/../../../node_modules/fis-preprocessor-modular');
         _.del(root+'/../../../node_modules/fis-lint-lint');
         _.del(root+'/../../../node_modules/fis-test-test');
@@ -640,4 +641,12 @@ describe('compile(path, debug)', function () {
 
     });
 
+    it('clean(name)', function(){
+        fis.util.mkdir(root+'/target/cache/compile/tmp');
+        expect(fis.util.exists(root+'/target/cache/compile/tmp')).to.be.true;
+        compile.clean('tmp');
+        expect(fis.util.exists(root+'/target/cache/compile/tmp')).to.be.false;
+        expect(fis.util.exists(root+'/target/cache/compile')).to.be.true;
+        fis.cache.clean(root+'/target');
+    });
 });

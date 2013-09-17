@@ -1170,7 +1170,16 @@ describe('_download(url, [callback], [extract], [opt])',function(){
         }, extract,{
             'data' : "write opt.data!"
         }) ;
+    });
 
+    it('下载错误', function(){
+        var url = 'http://10.48.30.87:8088/test/download/test.tar.gz';
+        var extract = downdir ;
+        _.download(url, function(){
+            var hash = fis.util.md5( url ,8);
+            var path = fis.project.getTempPath('downloads');
+            expect(fs.existsSync(path+'/'+hash+'.tar')).to.be.false;
+        }, extract) ;
     });
 
 });
