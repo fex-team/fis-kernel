@@ -286,7 +286,7 @@ describe('getUrl(withHash, withDomain)',function(){
         expect(url).to.equal('www.baidu.com/file/ext/modular/js.js?__inline');
     });
 
-    it.only('with domain——domain是对象，且键是图片，对图片的通用处理',function(){
+    it('with domain——domain是对象，且键是图片，对图片的通用处理',function(){
         //非js、css、图片文件
         fis.config.init();
         var path = __dirname+'/util/img/data.png';
