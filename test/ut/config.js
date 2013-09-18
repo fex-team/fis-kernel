@@ -57,7 +57,7 @@ describe('getUrl(withHash, withDomain)',function(){
         fis.config.get();
     });
 
-    it.only('del',function(){
+    it('del',function(){
         config.set('roadmap', {
             path : [{
                 "reg" : /^\/(.*)/,
