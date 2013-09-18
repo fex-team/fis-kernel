@@ -4,6 +4,15 @@ var fs = require('fs'),
 var project = fis.project;
 var expect = require('chai').expect;
 
+function getPath(root, args){
+    if(args && args.length > 0){
+        args = root + '/' + Array.prototype.join.call(args, '/');
+        return fis.util(args);
+    } else {
+        return root;
+    }
+}
+
 describe('project',function(){
     it('getTempPath', function(){
         var list = ['LOCALAPPDATA', 'APPDATA', 'HOME'];
@@ -13,7 +22,11 @@ describe('project',function(){
                 break;
             }
         }
+        tmp = tmp || __dirname + '/../';
         tmp = tmp.replace(/\\/g, '/');
+        tmp = getPath(tmp, arguments);
         expect(project.getTempPath()).to.be.equal(tmp+'/.fis-tmp');
+
+
     });
 });
