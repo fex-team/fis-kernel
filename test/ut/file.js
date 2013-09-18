@@ -247,7 +247,6 @@ describe('getUrl(withHash, withDomain)',function(){
     it('general',function(){
         //非js、css、图片文件
         fis.config.init();
-        fis.project.getTempPath();
         var path = __dirname+'/util/encoding/gbk.txt?__inline';
         var f = _.wrap(path);
         var url = f.getUrl();

@@ -13,7 +13,6 @@ var release = fis.release,
 var expect = require('chai').expect;
 
 describe('release',function(){
-
     beforeEach(function(){
         config.init();
         fis.compile.clean();
@@ -315,7 +314,6 @@ describe('release',function(){
         //opt为空所有打包、domain、md5都不做
         //domain
         project.setProjectRoot(_testPath+"/test2");
-        project.getTempPath();
         var conf = _testPath+"/test2/fis-conf.js";
         config.merge(fis.util.readJSON(_testPath + '/standard.json'));
         require(conf);
