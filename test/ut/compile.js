@@ -120,6 +120,29 @@ describe('compile(path, debug)', function () {
         expect(c).to.equal(content + added);
     });
 
+    it('general', function(){
+        compile.setup({
+            debug: false,
+            optimize: false,
+            hash: false,
+            lint: false,
+            domain: false
+        });
+        var f = _(__dirname, 'file/general.js'),
+            content = 'var abc = 123;';
+        _.write(f, content);
+        tempfiles.push(f);
+        var cache = fis.cache(f);
+
+        f = file(f);
+        f.isMod = true;
+        var c = compile(f).getContent();
+        expect(c).to.equal(content + '--parser----module--');
+        //from cache
+        c = compile(f).getContent();
+        expect(c).to.equal(content + '--parser----module--');
+    });
+
     it('not compile', function(){
         var f = _(__dirname, 'file/general.js'),
             content = 'var abc = 123;';
