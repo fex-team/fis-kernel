@@ -13,9 +13,10 @@ var  _ = fis.file,
 var expect = require('chai').expect;
 var u = fis.util;
 
-describe('getUrl(withHash, withDomain)',function(){
+describe('config',function(){
     beforeEach(function(){
         fis.project.setProjectRoot(__dirname);
+        config.init();
     });
 
     it('set',function(){
@@ -48,34 +49,15 @@ describe('getUrl(withHash, withDomain)',function(){
         var f = _.wrap(path);
         var url = f.getUrl(false,true);
         expect(url).to.equal('/file/ext/modular/js.js?__inline');
-        fis.config.del('roadmap');
-        fis.config.del('system');
-        fis.config.del('project');
-        console.log(fis.config.get())
-        fis.config.set('roadmap.domain',['asdf','asdfasfdaf','asdfasdf']);
-        fis.config.set();
-        fis.config.get();
     });
 
     it('del',function(){
-        config.set('roadmap', {
-            path : [{
-                "reg" : /^\/(.*)/,
-                "release" : "static/$1"
-            }]
-        });
-        fis.config.set('roadmap.domain','www.baidu.com');
-        path = __dirname+'/file/ext/modular/js.js?__inline';
-        var f = _.wrap(path);
-        var url = f.getUrl(false,true);
-        expect(url).to.equal('www.baidu.com/static/file/ext/modular/js.js?__inline');
-
         //without domain
         fis.config.del('roadmap.domain');
         path = __dirname+'/file/ext/modular/js.js?__inline';
         var f = _.wrap(path);
         var url = f.getUrl(false,true);
-        expect(url).to.equal('/static/file/ext/modular/js.js?__inline');
+        expect(url).to.equal('/file/ext/modular/js.js?__inline');
 
         //without path
         fis.config.del('roadmap.path');
@@ -86,23 +68,11 @@ describe('getUrl(withHash, withDomain)',function(){
     });
 
     it('del null', function(){
-        config.set('roadmap', {
-            path : [{
-                "reg" : /^\/(.*)/,
-                "release" : "static/$1"
-            }]
-        });
-        fis.config.set('roadmap.domain','www.baidu.com');
-        path = __dirname+'/file/ext/modular/js.js?__inline';
-        var f = _.wrap(path);
-        var url = f.getUrl(false,true);
-        expect(url).to.equal('www.baidu.com/static/file/ext/modular/js.js?__inline');
-
         fis.config.del();
         path = __dirname+'/file/ext/modular/js.js?__inline';
         var f = _.wrap(path);
         var url = f.getUrl(false,true);
-        expect(url).to.equal('www.baidu.com/static/file/ext/modular/js.js?__inline');
+        expect(url).to.equal('/file/ext/modular/js.js?__inline');
 
         fis.config.del('roadmap');
         fis.config.del('system');
