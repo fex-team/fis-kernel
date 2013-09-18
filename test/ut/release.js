@@ -274,10 +274,6 @@ describe('release',function(){
         };
 
         release(opt,function(ret){
-            expect(ret.map.pkg["photo:p0"].has).to.deep.equal([
-                "photo:widget/comp/comp.js",
-                "photo:widget/list/list.js"
-            ]);
             expect(ret.map.pkg["photo:p1"].has).to.deep.equal([
                 "photo:ui/b/b.js",
                 "photo:ui/a/a.js"
@@ -291,33 +287,29 @@ describe('release',function(){
 
     });
 
-//    //需要添加，bug未修
-//    it("打包文件 打包",function(done){
-//        fis.project.setProjectRoot(_testPath+"/test8");
-//        var conf = _testPath+"/test8/fis-conf.js";
-//        fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
-//        require(conf);
-//        var opt = {
-//            pack:true
-//        };
-//
-//        release(opt,function(ret){
-//            expect(ret.map.pkg["photo:p1"].has).to.deep.equal([
-//                "photo:widget/comp/comp.js",
-//                "photo:widget/list/list.js"
-//            ]);
-//            expect(ret.map.pkg["photo:p1"].has).to.deep.equal([
-//                "photo:ui/b/b.js",
-//                "photo:ui/a/a.js"
-//            ]);
-//            expect(ret.map.pkg["photo:p2"].has).to.deep.equal([
-//                "photo:js/a/a.js",
-//                "photo:js/b/b.js"
-//            ]);
-//            done();
-//        });
-//
-//    });
+    //需要添加，bug未修
+    it("打包文件 打包",function(done){
+        fis.project.setProjectRoot(_testPath+"/test8");
+        var conf = _testPath+"/test8/fis-conf.js";
+        fis.config.merge(fis.util.readJSON(_testPath + '/standard.json'));
+        require(conf);
+        var opt = {
+            pack:true
+        };
+
+        release(opt,function(ret){
+            expect(ret.map.pkg["photo:p0"].has).to.deep.equal([
+                "photo:widget/comp/comp.js",
+                "photo:widget/list/list.js"
+            ]);
+            expect(ret.map.pkg["photo:p1"].has).to.deep.equal([
+                "photo:ui/b/b.js",
+                "photo:ui/a/a.js"
+            ]);
+            done();
+        });
+
+    });
 
     it('without opt',function(done){
         //opt为空所有打包、domain、md5都不做

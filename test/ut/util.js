@@ -1498,6 +1498,11 @@ describe('_.isUtf8', function () {
         var bytes =  buf2arr(fs.readFileSync(__dirname+'/util/encoding/utf8-bom.txt'));
         expect(_.isUtf8(bytes)).to.be.true;
     });
+    it('isutf8',function(){
+        var bytes = buf2arr(fs.readFileSync(__dirname+'/util/encoding/utfcode.txt'));
+        expect(_.isUtf8(buf2arr(bytes))).to.be.true;
+
+    });
 });
 
 describe('_.glob(pattern, [str])', function(){
