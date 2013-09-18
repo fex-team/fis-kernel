@@ -274,10 +274,6 @@ describe('release',function(){
         };
 
         release(opt,function(ret){
-            expect(ret.map.pkg["photo:p0"].has).to.deep.equal([
-                "photo:widget/comp/comp.js",
-                "photo:widget/list/list.js"
-            ]);
             expect(ret.map.pkg["photo:p1"].has).to.deep.equal([
                 "photo:ui/b/b.js",
                 "photo:ui/a/a.js"
@@ -302,17 +298,13 @@ describe('release',function(){
         };
 
         release(opt,function(ret){
-            expect(ret.map.pkg["photo:p1"].has).to.deep.equal([
+            expect(ret.map.pkg["photo:p0"].has).to.deep.equal([
                 "photo:widget/comp/comp.js",
                 "photo:widget/list/list.js"
             ]);
             expect(ret.map.pkg["photo:p1"].has).to.deep.equal([
                 "photo:ui/b/b.js",
                 "photo:ui/a/a.js"
-            ]);
-            expect(ret.map.pkg["photo:p2"].has).to.deep.equal([
-                "photo:js/a/a.js",
-                "photo:js/b/b.js"
             ]);
             done();
         });
