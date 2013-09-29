@@ -13,7 +13,7 @@ var release = fis.release,
 var expect = require('chai').expect;
 
 describe('release',function(){
-    beforeEach(function(){
+    afterEach(function(){
         config.init();
         fis.compile.clean();
     });
@@ -82,6 +82,49 @@ describe('release',function(){
                 done();
             });
 
+        });
+    });
+
+    it('useMap false',function(done){
+        var opt = {
+            afterEach:function(file){
+                files.push(file.origin);
+                filess.push(file);
+            },
+            pack:true,
+            domain:true
+        },
+            files=[],expectFiles,filess=[];
+        expectFiles =
+            [ _testPath+'/test1/index.css',
+                _testPath+'/test1/index.js',
+                _testPath+'/test1/index.tpl',
+                _testPath+'/test1/npm.png',
+                _testPath+'/test1/plugin/FISResource.class.php',
+                _testPath+'/test1/plugin/compiler.body.php',
+                _testPath+'/test1/plugin/compiler.head.php',
+                _testPath+'/test1/plugin/compiler.html.php',
+                _testPath+'/test1/plugin/compiler.require.php',
+                _testPath+'/test1/plugin/compiler.script.php',
+                _testPath+'/test1/plugin/compiler.widget.php',
+                _testPath+'/test1/sea.js',
+                _testPath+'/test1/widget/comp/comp.js',
+                _testPath+'/test1/widget/list/list.css',
+                _testPath+'/test1/widget/list/list.js',
+                _testPath+'/test1/widget/list/list.tpl' ];
+        project.setProjectRoot(_testPath+"/test1");
+        var conf = _testPath+"/test1/fis-conf.js";
+        config.merge(fis.util.readJSON(_testPath + '/standard.json'));
+        require(conf);
+        fis.config.set('roadmap.path',[
+            {
+                reg : "*.css",
+                useMap : false
+            }
+        ]);
+        release(opt,function(ret){
+            expect(ret.map.res['index.js'].deps).to.be.undefined;
+            done();
         });
     });
 
@@ -185,10 +228,12 @@ describe('release',function(){
             expect(ret.src["/index.js"]._hash).to.equal(fis.util.md5(ret.src["/index.js"]._content,7));
             expect(ret.src["/ui/a/a.js"]._hash).to.equal(fis.util.md5(ret.src["/ui/a/a.js"]._content,7));
             expect(ret.src["/widget/list/list.js"]._hash).to.equal(fis.util.md5(ret.src["/widget/list/list.js"]._content,7));
+
             done();
         });
     });
     it('opt——md5关闭',function(done){
+
         project.setProjectRoot(_testPath+"/test5");
         var conf = _testPath+"/test5/fis-conf.js";
         config.merge(fis.util.readJSON(_testPath + '/standard.json'));
