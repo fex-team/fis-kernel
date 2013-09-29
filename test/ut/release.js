@@ -224,10 +224,10 @@ describe('release',function(){
             md5:true
         };
         release(opt,function(ret){
-            expect(ret.src["/index.css"]._hash).to.equal(fis.util.md5(ret.src["/index.css"]._content,7));
-            expect(ret.src["/index.js"]._hash).to.equal(fis.util.md5(ret.src["/index.js"]._content,7));
-            expect(ret.src["/ui/a/a.js"]._hash).to.equal(fis.util.md5(ret.src["/ui/a/a.js"]._content,7));
-            expect(ret.src["/widget/list/list.js"]._hash).to.equal(fis.util.md5(ret.src["/widget/list/list.js"]._content,7));
+            expect(ret.src["/index.css"]._md5).to.equal(fis.util.md5(ret.src["/index.css"]._content,7));
+            expect(ret.src["/index.js"]._md5).to.equal(fis.util.md5(ret.src["/index.js"]._content,7));
+            expect(ret.src["/ui/a/a.js"]._md5).to.equal(fis.util.md5(ret.src["/ui/a/a.js"]._content,7));
+            expect(ret.src["/widget/list/list.js"]._md5).to.equal(fis.util.md5(ret.src["/widget/list/list.js"]._content,7));
 
             done();
         });
@@ -243,10 +243,10 @@ describe('release',function(){
             md5:false
         };
         release(opt,function(ret){
-            expect("_hash" in ret.src["/index.css"]).to.equal(false);
-            expect("_hash" in ret.src["/index.js"]).to.equal(false);
-            expect("_hash" in ret.src["/ui/a/a.js"]).to.equal(false);
-            expect("_hash" in ret.src["/widget/list/list.js"]).to.equal(false);
+            expect("_md5" in ret.src["/index.css"]).to.equal(false);
+            expect("_md5" in ret.src["/index.js"]).to.equal(false);
+            expect("_md5" in ret.src["/ui/a/a.js"]).to.equal(false);
+            expect("_md5" in ret.src["/widget/list/list.js"]).to.equal(false);
             done();
         });
     });

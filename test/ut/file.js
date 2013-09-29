@@ -136,8 +136,8 @@ describe('getHash',function(){
     it('has hash',function(){
         var path = __dirname+'/file/ext/modular/js.js';
         var f = _.wrap(path);
-        f._hash = 'f88fd49';
-        expect(f.getHash()).to.equal(f._hash);
+        f._md5 = 'f88fd49';
+        expect(f.getHash()).to.equal(f._md5);
     });
 });
 describe('getBase64(prefix)',function(){
