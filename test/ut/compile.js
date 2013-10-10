@@ -557,6 +557,13 @@ describe('compile(path, debug)', function () {
     it('inline,uri--html',function(){
         //清空前面的config参数
         config.init();
+        fis.config.set('roadmap.path', [
+            {
+                reg : '**.png',
+                hash : '#abc',
+                query : '?a=123'
+            }
+        ]);
         var root = __dirname+'/compile/';
         fis.project.setProjectRoot(root);
 
@@ -573,7 +580,52 @@ describe('compile(path, debug)', function () {
             count2++;
         }
         expect(count1).to.equal(7);
-        expect(count2).to.equal(7);
+        expect(count2).to.equal(8);
+    });
+
+    it('uri with hash',function(){
+        //清空前面的config参数
+        config.init();
+        var root = __dirname+'/compile/';
+        fis.project.setProjectRoot(root);
+        var f1 = _(root+'test1.html'),
+            f2 = _(root+'test2.html'),
+            f3 = _(root+'test3.html'),
+            content1 = '\<img src=\"a.png?q=456#h=123\"\>',
+            content2 = '\<img src=\"a.png#h=456\"\>',
+            content3 = '\<img src=\"a.png?q=456\"\>';
+        _.write(f1, content1);
+        _.write(f2, content2);
+        _.write(f3, content3);
+        tempfiles.push(f1);
+        tempfiles.push(f2);
+        tempfiles.push(f3);
+        f1 = compile(f1);
+        f2 = compile(f2);
+        f3 = compile(f3);
+
+        expect(f1.getContent()).to.equal('\<img src=\"a.png?q=456#h=123\"\>');
+        expect(f2.getContent()).to.equal('\<img src=\"a.png#h=456\"\>');
+        expect(f3.getContent()).to.equal('\<img src=\"a.png?q=456\"\>');
+    });
+
+    it('uri with hash-config',function(){
+        //清空前面的config参数
+        config.init();
+        fis.config.set('roadmap.path', [
+            {
+                reg : '**.png',
+                hash : '#abc',
+                query : '?a=123'
+            }
+        ]);
+        var root = __dirname+'/compile/';
+        fis.project.setProjectRoot(root);
+        var f1 = compile(root+'html/main.html');
+//        f1= compile(f1);
+
+        var expectstr = file.wrap(root+'html/expect.html').getContent();
+        expect(f1.getContent()).to.equal(expectstr);
     });
     
     //html嵌入css的通用属性检查
