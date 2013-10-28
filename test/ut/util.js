@@ -996,6 +996,18 @@ describe('_query(str)',function(){
         expect(q.rest,'http://www.baidu.com');
     });
 
+    it('with hash',function(){
+        var q = _.query('http://www.baidu.com#def');
+        expect(q.origin,'http://www.baidu.com#def');
+        expect(q.query,'#def');
+        expect(q.rest,'http://www.baidu.com');
+
+        q = _.query('http://www.baidu.com?type=q#def');
+        expect(q.origin,'http://www.baidu.com?type=q#def');
+        expect(q.query,'?type=q#def');
+        expect(q.rest,'http://www.baidu.com');
+    });
+
 });
 
 describe('_pathinfo(path)',function(){
@@ -1091,6 +1103,7 @@ describe('_parseUrl(url, opt)',function(){
             }
         );
     });
+
 });
 
 describe('_download(url, [callback], [extract], [opt])',function(){
