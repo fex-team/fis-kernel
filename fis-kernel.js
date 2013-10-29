@@ -8,7 +8,6 @@
 var last = Date.now();
 
 //oo
-var superTest = /\b_super\b/;
 Function.prototype.derive = function(constructor, proto){
     if(typeof constructor === 'object'){
         proto = constructor;
@@ -21,33 +20,19 @@ Function.prototype.derive = function(constructor, proto){
         constructor.apply(this, arguments);
     };
     var tmp = function(){};
-    var addSuper = function(name, fn, parent) {
-        return function() {
-            var temp = this._super;
-            this._super = parent[name];
-            var ret = fn.apply(this, arguments);
-            this._super = temp;
-            return ret;
-        }
-    }
     tmp.prototype = parent.prototype;
     var fp = new tmp(),
         cp = constructor.prototype,
-        pp = parent.prototype,
         key;
     for(key in cp){
         if(cp.hasOwnProperty(key)){
-            fp[key] =
-                (typeof cp[key] === 'function' && typeof pp[name] === 'function' && superTest.test(cp[key])) ? addSuper(key, cp[key],pp) :
-                    cp[key];
+            fp[key] = cp[key];
         }
     }
     proto = proto || {};
     for(key in proto){
         if(proto.hasOwnProperty(key)){
-            fp[key] =
-                (typeof proto[key] === 'function' && (typeof cp[key] === 'function' ||  typeof pp[key] === 'function') && superTest.test(proto[key])) ? addSuper(key, proto[key], typeof cp[key] === 'function' ? cp : pp) :
-                    proto[key];
+            fp[key] = proto[key];
         }
     }
     fp.constructor = constructor.prototype.constructor;
