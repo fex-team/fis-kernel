@@ -3,8 +3,18 @@
 
 .test{
     background-image: url(./test.bmp);
+    background-image: url( ./test.bmp);
+    background-image: url(./test.bmp );
     background-image: url('./test.bmp');
+    background-image: url( './test.bmp');
+    background-image: url('./test.bmp' );
     background-image: url("./test.bmp");
+    background-image: url( "./test.bmp");
+    background-image: url("./test.bmp" );
     _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='./test.bmp');
+    _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src='./test.bmp');
+    _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='./test.bmp' );
     _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='./test.bmp?__inline');
+    _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader( src='./test.bmp?__inline');
+    _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='./test.bmp?__inline' );
 }
