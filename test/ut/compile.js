@@ -167,8 +167,8 @@ describe('compile(path, debug)', function () {
         //f1内嵌f2，f2内嵌f3
         var f1 = _(__dirname, 'file/embed.js'),
             f2 = _(__dirname, 'file/embed.coffee'),
-            content1 = 'I am embed.js;<[{embed(./embed.coffee?i=123)}]>',
-            content2 = '<[{embed(./embed2.js)}]>';
+            content1 = 'I am embed.js;'+compile.lang.embed.ld+'./embed.coffee?i=123'+compile.lang.embed.rd,
+            content2 = compile.lang.embed.ld+'./embed2.js'+compile.lang.embed.rd;
         var f3 = _(__dirname, 'file/embed2.js');
         var content3 = 'I am embed2.js';
         _.write(f1, content1);
@@ -201,8 +201,8 @@ describe('compile(path, debug)', function () {
         //f1内嵌f2，f2内嵌f3
         var f1 = _(__dirname, 'file/embed.js'),
             f2 = _(__dirname, 'file/embed.coffee'),
-            content1 = 'I am embed.js;<[{embed(./embed.coffee?i=123)}]>',
-            content2 = '<[{embed(./embed2.js)}]>';
+            content1 = 'I am embed.js;'+compile.lang.embed.ld+'./embed.coffee?i=123'+compile.lang.embed.rd,
+            content2 = compile.lang.embed.ld+'./embed2.js'+compile.lang.embed.rd;
         var f3 = _(__dirname, 'file/embed2.js');
         var content3 = 'I am embed2.js';
         _.write(f1, content1);
@@ -228,10 +228,10 @@ describe('compile(path, debug)', function () {
     it('embed--single embed', function () {
         var f1 = _(__dirname, 'file/embed.js'),
             f2 = _(__dirname, 'file/embed.coffee'),
-            content1 = 'I am embed.js;<[{embed(./embed.coffee?i=123)}]>',
+            content1 = 'I am embed.js;'+compile.lang.embed.ld+'./embed.coffee?i=123'+compile.lang.embed.rd,
             content2 = 'I am embed.coffee;';
         var f3 = _(__dirname, 'file/embed2.js');
-        var content3 = 'I am embed2.js;<[{embed(./embed.coffee?i=124)}]>';
+        var content3 = 'I am embed2.js;'+compile.lang.embed.ld+'./embed.coffee?i=124'+compile.lang.embed.rd;
         _.write(f1, content1);
         _.write(f2, content2);
         _.write(f3, content3);
@@ -257,7 +257,7 @@ describe('compile(path, debug)', function () {
     it('embed--isAbusolute', function () {
         var f1 = _(__dirname, 'file/embed.js'),
             f2 = _(__dirname, 'file/embed.coffee'),
-            content1 = 'I am embed.js;<[{embed('+__dirname+'/file/embed.coffee)}]>',
+            content1 = 'I am embed.js;'+compile.lang.embed.ld+__dirname+'/file/embed.coffee'+compile.lang.embed.rd,
             content2 = 'I am embed.coffee;';
         _.write(f1, content1);
         _.write(f2, content2);
@@ -273,8 +273,8 @@ describe('compile(path, debug)', function () {
     it('embed with require', function(){
         var f1 = _(__dirname, 'file/embed.js'),
             f2 = _(__dirname, 'file/embed.css'),
-            content1 = 'I am embed.js;<[{embed(./embed.css)}]>',
-            content2 = 'I am embed.css;<[{require(ext/lint/lint.js)}]>';
+            content1 = 'I am embed.js;'+compile.lang.embed.ld+'./embed.css'+compile.lang.embed.rd,
+            content2 = 'I am embed.css;'+compile.lang.require.ld+'ext/lint/lint.js'+compile.lang.require.rd;
         _.write(f1, content1);
         _.write(f2, content2);
         tempfiles.push(f1);
@@ -298,8 +298,8 @@ describe('compile(path, debug)', function () {
         });
         var f1 = _(__dirname, 'file/embed.js'),
             f2 = _(__dirname, 'file/embed.css'),
-            content1 = 'I am embed.js;<[{embed(./embed.css)}]>',
-            content2 = 'I am embed.css;<[{require(ext/lint/lint.js)}]>';
+            content1 = 'I am embed.js;'+compile.lang.embed.ld+'./embed.css'+compile.lang.embed.rd,
+            content2 = 'I am embed.css;'+compile.lang.require.ld+'ext/lint/lint.js'+compile.lang.require.rd;
         _.write(f1, content1);
         _.write(f2, content2);
         tempfiles.push(f1);
@@ -319,7 +319,7 @@ describe('compile(path, debug)', function () {
     it('embed img', function(){
         var f1 = _(__dirname, 'file/embed.js'),
             f2 = _(__dirname, 'file/embed/embed.txt'),
-            content1 = 'I am embed.js;<[{embed(./embed/embed.gif)}]>',
+            content1 = 'I am embed.js;'+compile.lang.embed.ld+'./embed/embed.gif'+compile.lang.embed.rd,
             content2 = fs.readFileSync(f2, "utf-8");
         _.write(f1, content1);
         tempfiles.push(f1);
@@ -332,7 +332,7 @@ describe('compile(path, debug)', function () {
 
     it('require', function () {
         var f1 = _(__dirname, 'file/require.js'),
-            content1 = 'I <[{require(ext/lint/lint.js)}]>am re<[{require(ext/modular/js.js)}]>quire.js;<[{require(ext/lint/lint.js)}]>.';
+            content1 = 'I '+compile.lang.require.ld+'ext/lint/lint.js'+compile.lang.require.rd+'am re'+compile.lang.require.ld+'ext/modular/js.js'+compile.lang.require.rd+'quire.js;'+compile.lang.require.ld+'ext/lint/lint.js'+compile.lang.require.rd+'.';
         _.write(f1, content1);
 
         tempfiles.push(f1);
@@ -362,7 +362,7 @@ describe('compile(path, debug)', function () {
         var f1 = _(__dirname, 'file/uri.js'),
             f2 = _(__dirname, 'file/curi.coffee'),
             f3 = _(__dirname, 'file/uri.php'),
-            content1 = '<[{uri(curi.coffee?i=2)}]>I am uri.js;<[{uri(./curi.coffee?i=1)}]>.<[{uri(./uri.php?i=4)}]>.',
+            content1 = compile.lang.uri.ld+'curi.coffee?i=2'+compile.lang.uri.rd+'I am uri.js;'+compile.lang.uri.ld+'./curi.coffee?i=1'+compile.lang.uri.rd+'.'+compile.lang.uri.ld+'./uri.php?i=4'+compile.lang.uri.rd+'.',
             content2 = 'I am uri.coffee;',
             content3 = 'I am uri.php;';
         _.write(f1, content1);
@@ -392,7 +392,7 @@ describe('compile(path, debug)', function () {
     it('dep', function(){
         var f1 = _(__dirname, 'file/dep.js'),
             f2 = _(__dirname, 'file/dep.coffee'),
-            content1 = 'I am uri.js;<[{dep(dep.coffee)}]>.',
+            content1 = 'I am uri.js;'+compile.lang.dep.ld+'dep.coffee'+compile.lang.dep.rd+'.',
             content2 = 'I am uri.coffee;';
         _.write(f1, content1);
         _.write(f2, content2);
