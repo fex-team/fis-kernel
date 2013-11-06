@@ -280,11 +280,11 @@ describe('compile(path, debug)', function () {
         tempfiles.push(f1);
         tempfiles.push(f2);
         var c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.jsTEST' + added);
+        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;ext/lint/lint.jsTEST\"' + added);
         expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
         //from cache
         c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.jsTEST' + added);
+        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;ext/lint/lint.jsTEST\"' + added);
         expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
     });
 
@@ -305,11 +305,11 @@ describe('compile(path, debug)', function () {
         tempfiles.push(f1);
         tempfiles.push(f2);
         var c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.js_TEST' + added);
+        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;ext/lint/lint.js_TEST\"' + added);
         expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
         //from cache
         c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.js_TEST' + added);
+        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;ext/lint/lint.js_TEST\"' + added);
         expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
 
         var processor = config.require("test");
