@@ -286,6 +286,30 @@ describe('compile(path, debug)', function () {
         c = compile(f1).getContent();
         expect(c).to.equal('I am embed.js;' + '\"I am embed.css;ext/lint/lint.jsTEST\"' + added);
         expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
+
+        //////isJsLike=true
+        compile.clean();
+        config.set('roadmap', {
+            path : [
+                    {
+                        "reg" : /^\/(.*)/,
+                        "isJsLike" : true
+                    }
+                ]
+        });
+        content1 = 'I am embed.js;'+compile.lang.embed.ld+'./embed.css'+compile.lang.embed.rd,
+        content2 = 'I am embed.css;'+compile.lang.require.ld+'ext/lint/lint.js'+compile.lang.require.rd;
+        _.write(f1, content1);
+        _.write(f2, content2);
+        tempfiles.push(f1);
+        tempfiles.push(f2);
+        var c = compile(f1).getContent();
+        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.jsTEST' + added);
+        expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
+        //from cache
+        c = compile(f1).getContent();
+        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.jsTEST' + added);
+        expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
     });
 
     it('setting instead of defaultOptions', function(){
