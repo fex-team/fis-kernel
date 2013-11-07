@@ -25,7 +25,7 @@ describe('compile(path, debug)', function () {
     var optstr = '--opt--';
     //lint处理的结果不会写入到文件
     var added = parstr+modstr+optstr;
-    before(function(){
+    beforeEach(function(){
         config.init();
         fis.project.setProjectRoot(root);
         fis.project.setTempRoot(root+'/target/');       //cache clean dir
@@ -313,6 +313,7 @@ describe('compile(path, debug)', function () {
     });
 
     it('setting instead of defaultOptions', function(){
+        compile.clean();
         config.set('settings', {
             parser : {
                 'options':{
@@ -671,6 +672,14 @@ describe('compile(path, debug)', function () {
     });
 
     it('require--js',function(){
+        //清空前面的config参数
+        config.init();
+        fis.config.set('roadmap.path', [
+            {
+                reg : '**.js',
+                query : '?a=t'
+            }
+        ]);
         var root = __dirname+'/compile/';
         fis.project.setProjectRoot(root);
 
@@ -681,6 +690,14 @@ describe('compile(path, debug)', function () {
         expect(f1.requires).to.deep.equal([ 'js/main.js']);
     });
     it('require--css',function(){
+        //清空前面的config参数
+        config.init();
+        fis.config.set('roadmap.path', [
+            {
+                reg : '**.js',
+                query : '?a=t'
+            }
+        ]);
         var root = __dirname+'/compile/';
         fis.project.setProjectRoot(root);
 
