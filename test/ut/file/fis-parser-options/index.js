@@ -5,10 +5,10 @@
 
     'use strict';
     module.exports = function(content, file, conf) {
-        return content + conf.test;
+        return content /*+ conf.test*/;
     };
 
     module.exports.defaultOptions = {
-        test: 'TEST'
+        test: '--compile--'
     };
 

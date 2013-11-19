@@ -280,14 +280,35 @@ describe('compile(path, debug)', function () {
         tempfiles.push(f1);
         tempfiles.push(f2);
         var c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;ext/lint/lint.jsTEST\"' + added);
+        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;ext/lint/lint.js\"' + added);
         expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
         //from cache
         c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;ext/lint/lint.jsTEST\"' + added);
+        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;ext/lint/lint.js\"' + added);
         expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
+    });
+    it('embed with and without isJsLike',function(){  
+        var f1 = _(__dirname, 'file/embed.js'),
+            f2 = _(__dirname, 'file/embed.css'),
+            f3 = _(__dirname, 'file/embed.html'),
+            f4 = _(__dirname, 'file/embed.txt');
+        var content1 = 'I am embed.js;'+compile.lang.embed.ld+'./embed.css'+compile.lang.embed.rd+compile.lang.embed.ld+'./embed.html'+compile.lang.embed.rd+compile.lang.embed.ld+'./embed.txt'+compile.lang.embed.rd,
+            content2 = 'I am embed.css;',
+            content3 = '<head>test</head>',
+            content4 = 'I am embed.txt;';
+        _.write(f1, content1);
+        _.write(f2, content2);
+        _.write(f3, content3);
+        _.write(f4, content4);
+        var c = compile(f1).getContent();
+        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;\"\"<head>test</head>\"\"I am embed.txt;\"' + added);
+        expect(compile(f1).requires).to.deep.equal([]);
+        //from cache
+        c = compile(f1).getContent();
+        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;\"\"<head>test</head>\"\"I am embed.txt;\"' + added);
+        expect(compile(f1).requires).to.deep.equal([]);
 
-        //////isJsLike=true
+        //////isJsLike=true, embed not as txt
         compile.clean();
         config.set('roadmap', {
             path : [
@@ -297,19 +318,21 @@ describe('compile(path, debug)', function () {
                     }
                 ]
         });
-        content1 = 'I am embed.js;'+compile.lang.embed.ld+'./embed.css'+compile.lang.embed.rd,
-        content2 = 'I am embed.css;'+compile.lang.require.ld+'ext/lint/lint.js'+compile.lang.require.rd;
-        _.write(f1, content1);
+         _.write(f1, content1);
         _.write(f2, content2);
+        _.write(f3, content3);
+        _.write(f4, content4);
         tempfiles.push(f1);
         tempfiles.push(f2);
+        tempfiles.push(f3);
+        tempfiles.push(f4);
         var c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.jsTEST' + added);
-        expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
+        expect(c).to.equal('I am embed.js;' + 'I am embed.css;<head>test</head>I am embed.txt;' + added);
+        expect(compile(f1).requires).to.deep.equal([]);
         //from cache
         c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + 'I am embed.css;ext/lint/lint.jsTEST' + added);
-        expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
+        expect(c).to.equal('I am embed.js;' + 'I am embed.css;<head>test</head>I am embed.txt;' + added);
+        expect(compile(f1).requires).to.deep.equal([]);
     });
 
     it('setting instead of defaultOptions', function(){
@@ -804,5 +827,27 @@ describe('compile(path, debug)', function () {
         expect(fis.util.exists(root+'/target/cache/compile/tmp')).to.be.false;
         expect(fis.util.exists(root+'/target/cache/compile')).to.be.true;
         fis.cache.clean(root+'/target');
+    });
+
+    it('optimize uglify-js',function(){
+        config.init();
+        config.set('modules', {
+            optimizer :{
+                js :'uglify-js'
+            }
+        });
+        config.set('settings.optimizer.uglify-js.compress.sequences', false);
+        // _.copy(root+'/fis-modular-modular',root+'/../../../node_modules/fis-preprocessor-modular1');
+        // tempfiles.push(root+'/../../../node_modules/fis-preprocessor-modular1');
+        added = parstr+modstr+modstr+modstr+optstr;
+
+        var root = __dirname+'/compile/';
+        fis.project.setProjectRoot(root);
+        var f1 = _(root+'a.js'),
+            content1 = '(function(){var a = 1;var c = 7;var i = 0;if(a < 0){i = -7;}for (var zz = 0; i < c; i++) {alert(i);}})();';
+        _.write(f1, content1);
+        tempfiles.push(f1);
+        f1 = compile(f1);
+        expect(f1.getContent()).to.equal('!function(){var r=1,a=7,f=0;0>r&&(f=-7);for(;a>f;f++)alert(f)}();');
     });
 });
