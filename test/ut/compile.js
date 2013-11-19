@@ -280,11 +280,11 @@ describe('compile(path, debug)', function () {
         tempfiles.push(f1);
         tempfiles.push(f2);
         var c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;ext/lint/lint.js\"' + added);
+        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;ext/lint/lint.js--compile--\"' + added);
         expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
         //from cache
         c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;ext/lint/lint.js\"' + added);
+        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;ext/lint/lint.js--compile--\"' + added);
         expect(compile(f1).requires).to.deep.equal(['ext/lint/lint.js']);
     });
     it('embed with and without isJsLike',function(){  
@@ -301,11 +301,11 @@ describe('compile(path, debug)', function () {
         _.write(f3, content3);
         _.write(f4, content4);
         var c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;\"\"<head>test</head>\"\"I am embed.txt;\"' + added);
+        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;--compile--\"\"<head>test</head>\"\"I am embed.txt;\"' + added);
         expect(compile(f1).requires).to.deep.equal([]);
         //from cache
         c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;\"\"<head>test</head>\"\"I am embed.txt;\"' + added);
+        expect(c).to.equal('I am embed.js;' + '\"I am embed.css;--compile--\"\"<head>test</head>\"\"I am embed.txt;\"' + added);
         expect(compile(f1).requires).to.deep.equal([]);
 
         //////isJsLike=true, embed not as txt
@@ -327,11 +327,11 @@ describe('compile(path, debug)', function () {
         tempfiles.push(f3);
         tempfiles.push(f4);
         var c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + 'I am embed.css;<head>test</head>I am embed.txt;' + added);
+        expect(c).to.equal('I am embed.js;' + 'I am embed.css;--compile--<head>test</head>I am embed.txt;' + added);
         expect(compile(f1).requires).to.deep.equal([]);
         //from cache
         c = compile(f1).getContent();
-        expect(c).to.equal('I am embed.js;' + 'I am embed.css;<head>test</head>I am embed.txt;' + added);
+        expect(c).to.equal('I am embed.js;' + 'I am embed.css;--compile--<head>test</head>I am embed.txt;' + added);
         expect(compile(f1).requires).to.deep.equal([]);
     });
 
@@ -340,7 +340,7 @@ describe('compile(path, debug)', function () {
         config.set('settings', {
             parser : {
                 'options':{
-                    test : '_TEST'
+                    PARAtest : '_TEST'
                 }
             }
         });
