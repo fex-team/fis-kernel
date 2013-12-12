@@ -16,12 +16,12 @@ var fis = require('../../fis-kernel.js'),
 var root = __dirname + '/file';
 var compile = fis.compile;
 var fs = require('fs');
+
 describe('compile(path, debug)', function () {
     var conf = config.get(),
         tempfiles = [];
     var modstr = '--module--';
     var parstr = '--parser--';
-    var lintstr = '--lint--';
     var optstr = '--opt--';
     //lint处理的结果不会写入到文件
     var added = parstr+modstr+optstr;
@@ -91,8 +91,8 @@ describe('compile(path, debug)', function () {
             debug:true,
             optimize:true,
             hash:true,
-            lint :true,
-            test :true,
+            // lint :true,
+            // test :true,
             domain:true
         });
         tempfiles = [];
@@ -108,7 +108,7 @@ describe('compile(path, debug)', function () {
         var f = _(__dirname, 'file/general.js'),
             content = 'var abc = 123;';
         _.write(f, content);
-        tempfiles.push(f);
+        // tempfiles.push(f);
         var cache = fis.cache(f);
 
         f = file(f);
@@ -118,9 +118,31 @@ describe('compile(path, debug)', function () {
         //from cache
         c = compile(f).getContent();
         expect(c).to.equal(content + added);
+
+        //useParser,usePreprocessor,useOptimizer false
+        compile.clean();
+        config.set('roadmap.path', [
+            {
+                reg : '**.js',
+                useParser : false,
+                usePreprocessor : false,
+                useOptimizer :false
+            }
+        ]);
+        f = _(__dirname, 'file/general.js');
+        _.write(f, content);
+        tempfiles.push(f);
+        f = file(f);
+
+        c = compile(f).getContent();
+        expect(c).to.equal(content);
+        //from cache
+        c = compile(f).getContent();
+        expect(c).to.equal(content);
+
     });
 
-    it('general', function(){
+    it('general_', function(){
         compile.setup({
             debug: false,
             optimize: false,
@@ -141,6 +163,37 @@ describe('compile(path, debug)', function () {
         //from cache
         c = compile(f).getContent();
         expect(c).to.equal(content + '--parser----module--');
+    });
+
+    it('roadmap.path useXX parameter', function(){
+        //useParser,usePreprocessor,useStandard,useLint,useTest,useOprimizer
+        compile.clean();
+        config.init();
+        config.set('roadmap.path', [
+            {
+                reg : '**.js',
+                useParser : false,
+                usePreprocessor : false,
+                useStandard : false,
+                // usePostprocessor : false,
+                useLint : false,
+                useTest : false,
+                useOptimizer :false
+            }
+        ]);
+        var f = _(__dirname, 'file/general.js'),
+            content = 'var abc = 123;';
+        _.write(f, content);
+        tempfiles.push(f);
+        var cache = fis.cache(f);
+
+        f = file(f);
+        f.isMod = true;
+        var c = compile(f).getContent();
+        expect(c).to.equal(content);
+        //from cache
+        c = compile(f).getContent();
+        expect(c).to.equal(content);
     });
 
     it('not compile', function(){
@@ -195,6 +248,7 @@ describe('compile(path, debug)', function () {
         _.touch(f3,12345678);
         c = compile(f1).getContent();
         expect(c).to.equal('I am embed.js;' + content3 +parstr + modstr+ optstr + modstr+ optstr + parstr + modstr + optstr);
+
     });
 
     it('embed--a->b->c,cache b,a first then change c and watch changes of a', function(){
@@ -370,12 +424,30 @@ describe('compile(path, debug)', function () {
             content1 = 'I am embed.js;'+compile.lang.embed.ld+'./embed/embed.gif'+compile.lang.embed.rd,
             content2 = fs.readFileSync(f2, "utf-8");
         _.write(f1, content1);
-        tempfiles.push(f1);
+        // tempfiles.push(f1);
         var c = compile(f1).getContent();
         expect(c).to.equal('I am embed.js;data:image/gif;base64,'+ content2 + added);
         //from cache
         c = compile(f1).getContent();
         expect(c).to.equal('I am embed.js;data:image/gif;base64,' + content2 + added);
+
+
+        //check useStandard
+        compile.clean();
+        config.set('roadmap.path', [
+            {
+                reg : '**.js',
+                useStandard : false
+            }
+        ]);
+        _.write(f1, content1);
+        _.write(f2, content2);
+        tempfiles.push(f1);
+        c = compile(f1).getContent();
+        expect(c).to.equal(content1+added);
+        //from cache
+        c = compile(f1).getContent();
+        expect(c).to.equal(content1+added);
     });
 
     it('require', function () {
@@ -850,4 +922,5 @@ describe('compile(path, debug)', function () {
         f1 = compile(f1);
         expect(f1.getContent()).to.equal('!function(){var r=1,a=7,f=0;0>r&&(f=-7);for(;a>f;f++)alert(f)}();');
     });
+
 });
