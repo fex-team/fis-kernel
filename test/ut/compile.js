@@ -196,7 +196,7 @@ describe('compile(path, debug)', function () {
         expect(c).to.equal(content);
     });
 
-    it.only('not compile', function(){
+    it('not compile', function(){
         //text
         var f = _(__dirname, 'file/general.js'),
             content = 'var abc = 123;';
