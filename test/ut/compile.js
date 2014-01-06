@@ -196,7 +196,7 @@ describe('compile(path, debug)', function () {
         expect(c).to.equal(content);
     });
 
-    it('not compile', function(){
+    it.only('not compile', function(){
         //text
         var f = _(__dirname, 'file/general.js'),
             content = 'var abc = 123;';
@@ -209,6 +209,7 @@ describe('compile(path, debug)', function () {
 
         //picture
         var f2 = _(__dirname, 'compile/css/test.bmp');
+        f2 = file(f2);        
         f2.useCompile = false;
         var c2 = compile(f2).getContent();
         expect(typeof(c2)).to.equal("object");
