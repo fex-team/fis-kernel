@@ -197,13 +197,22 @@ describe('compile(path, debug)', function () {
     });
 
     it('not compile', function(){
+        //text
         var f = _(__dirname, 'file/general.js'),
             content = 'var abc = 123;';
         _.write(f, content);
         f = file(f);
         f.useCompile = false;
-        var c = compile(f).getContent().toString();
-        expect(c).to.equal(content);
+        var c = compile(f).getContent();
+        expect(typeof(c)).to.equal("string");
+        expect(c.toString()).to.equal(content);
+
+        //picture
+        var f2 = _(__dirname, 'compile/css/test.bmp');
+        f2 = file(f2);        
+        f2.useCompile = false;
+        var c2 = compile(f2).getContent();
+        expect(typeof(c2)).to.equal("object");
 
     });
 
