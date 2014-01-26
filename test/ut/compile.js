@@ -709,7 +709,7 @@ describe('compile(path, debug)', function () {
             count2++;
         }
         expect(count1).to.equal(7);
-        expect(count2).to.equal(8);
+        expect(count2).to.equal(9);
     });
 
     it('uri with hash',function(){
