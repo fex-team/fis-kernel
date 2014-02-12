@@ -683,7 +683,7 @@ describe('compile(path, debug)', function () {
         expect(c).to.equal('.test{\r\n   background: red;\r\n}.test{\r\n   background: red;\r\n}.test{\r\n   background: red;\r\n}.test{\r\n   background: red;\r\n}.test{\r\n   background: red;\r\n}')
     });
 
-    it.only('inline,uri--html',function(){
+    it('inline,uri--html',function(){
         //清空前面的config参数
         config.init();
         fis.config.set('roadmap.path', [
