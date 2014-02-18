@@ -61,6 +61,8 @@ Object.defineProperty(global, 'fis', {
     value : fis
 });
 
+fis.emitter = new (require('events').EventEmitter);
+
 //time for debug
 fis.time = function(title){
     console.log(title + ' : ' + (Date.now() - last) + 'ms');
@@ -72,14 +74,25 @@ fis.log = require('./lib/log.js');
 
 //require
 fis.require = function(){
-    var name = 'fis-' + Array.prototype.slice.call(arguments, 0).join('-');
-    try {
-        return require(name);
-    } catch(e) {
-        e.message = 'unable to load plugin [' + name + '], message : ' + e.message;
-        fis.log.error(e);
+    var path;
+    var name = Array.prototype.slice.call(arguments, 0).join('-');
+    var names = [];
+    for(var i = 0, len = fis.require.prefixes.length; i < len; i++){
+        try {
+            var pluginName = fis.require.prefixes[i] + '-' + name;
+            names.push(pluginName);
+            path = require.resolve(pluginName);
+            try {
+                return require(pluginName);
+            } catch (e){
+                fis.log.error('load plugin [' + pluginName + '] error : ' + e.message);
+            }
+        } catch (e){}
     }
+    fis.log.error('unable to load plugin [' + names.join('] or [') + ']');
 };
+
+fis.require.prefixes = ['fis'];
 
 //system config
 fis.config = require('./lib/config.js');
