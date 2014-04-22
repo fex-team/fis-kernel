@@ -76,6 +76,7 @@ fis.log = require('./lib/log.js');
 fis.require = function(){
     var path;
     var name = Array.prototype.slice.call(arguments, 0).join('-');
+    if(fis.require._cache.hasOwnProperty(name)) return fis.require._cache[name];
     var names = [];
     for(var i = 0, len = fis.require.prefixes.length; i < len; i++){
         try {
@@ -83,7 +84,7 @@ fis.require = function(){
             names.push(pluginName);
             path = require.resolve(pluginName);
             try {
-                return require(pluginName);
+                return fis.require._cache[name] = require(pluginName);
             } catch (e){
                 fis.log.error('load plugin [' + pluginName + '] error : ' + e.message);
             }
@@ -91,6 +92,8 @@ fis.require = function(){
     }
     fis.log.error('unable to load plugin [' + names.join('] or [') + ']');
 };
+
+fis.require._cache = {};
 
 fis.require.prefixes = ['fis'];
 
