@@ -834,6 +834,26 @@ describe('_.del(rPath, include, exclude)',function(){
         expect(_.isDir(__dirname+"/tmp/")).to.be.false;
     });
 
+    it ('remove hidden folder on linux / Unix', function () {
+        var tmpdir = __dirname + '/tmp/tmp2/.bin';
+        _.mkdir(tmpdir);
+        fs.writeFileSync(tmpdir + '/.access', '[REWRITE]\n');
+        expect(_.isDir(tmpdir)).to.be.true;
+        expect(_.del(__dirname + "/tmp")).to.be.true;
+        expect(_.isDir(tmpdir)).to.be.false;
+    });
+
+    it ('remove folder include symlink file', function () {
+        var tmpdir = __dirname + '/tmp_1/tmp2/.bin';
+        _.mkdir(tmpdir);
+        fs.writeFileSync(tmpdir + '/.access', '[REWRITE]\n');
+        fs.writeFileSync(tmpdir + '/src', 'TEST\n');
+        fs.symlinkSync(tmpdir + '/src', tmpdir + '/dst');
+        expect(_.isDir(tmpdir)).to.be.true;
+        expect(_.del(__dirname + "/tmp_1")).to.be.true;
+        expect(_.isDir(tmpdir)).to.be.false;
+    });
+
     it('include',function(){
         var tmpdir = __dirname+"/tmp/tmp2";
         _.mkdir(tmpdir);
