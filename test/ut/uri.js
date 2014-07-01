@@ -186,3 +186,14 @@ var expect = require('chai').expect;
 
          });
     });
+
+    describe('bug #93', function () {
+        it ('replaceMatches bug', function () {
+            var source = "$1$&",
+            matches = {
+                "&":"test1",
+                "1":""
+            };
+            expect(uri.replaceMatches(source,matches)).to.equal("$&");  
+        });
+    });
