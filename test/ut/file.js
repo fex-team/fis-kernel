@@ -659,3 +659,19 @@ describe('addSameNameRequire(ext)',function(){
 //        ]);
 //    });
 //});
+
+describe("get/set is*Like", function () {
+    it ('0', function () {
+        var f = _.wrap('test/test.js');
+        expect(f.isHtmlLike).to.equal(false);
+        expect(f.isCssLike).to.equal(false);
+
+        f.isHtmlLike = true;
+        expect(f.isJsLike).to.equal(false);
+        expect(f.isCssLike).to.equal(false);
+
+        f.isCssLike = true;
+        expect(f.isHtmlLike).to.equal(false);
+        expect(f.isJsLike).to.equal(false);
+    });
+});
