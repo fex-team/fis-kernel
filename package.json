@@ -20,5 +20,8 @@
     "dependencies" : {
         "tar"  : "0.1.17",
         "iconv-lite" : "0.2.10"
+    },
+    "devDependencies": {
+        "chai": "^1.9.1"
     }
 }
