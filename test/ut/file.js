@@ -673,5 +673,9 @@ describe("get/set is*Like", function () {
         f.isCssLike = true;
         expect(f.isHtmlLike).to.equal(false);
         expect(f.isJsLike).to.equal(false);
+
+        f.isHtmlLike = false;
+        expect(f.isCssLike).to.equal(true);
+        expect(f.isHtmlLike).to.equal(false);
     });
 });
