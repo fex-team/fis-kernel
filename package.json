@@ -24,9 +24,9 @@
     "iconv-lite": "0.2.10"
   },
   "devDependencies": {
-    "chai": "^1.9.1",
+    "chai": "1.9.1",
     "fis-optimizer-clean-css": "0.0.12",
-    "fis-optimizer-uglify-js": "^0.1.2",
+    "fis-optimizer-uglify-js": "0.1.2",
     "fis-packager-map": "0.0.9"
   }
 }

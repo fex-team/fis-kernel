@@ -818,7 +818,7 @@ describe('_find(rPath, [include], [exclude])',function(){
     });
 
     it('include and exclude',function(){
-        file = _.find(__dirname+'/util/base64/', ['**.txt','**.gif'], ['**.txt','**.gif']);
+        var file = _.find(__dirname+'/util/base64/', ['**.txt','**.gif'], ['**.txt','**.gif']);
         expect(file.length).to.equal(0);
 
         file = _.find(__dirname+'/util/base64/', ['**.txt','**.gif'], ['**.gif']);
