@@ -792,6 +792,9 @@ describe('_find(rPath, [include], [exclude])',function(){
 
         file = _.find(__dirname+'/util/base64/','xsl');
         expect(file).to.deep.equal([]);
+
+        file = _.find(__dirname+'/util/base64/',['**.txt','**.gif']);
+        expect(file.length).to.equal(2);
     });
 
     //include和exclude都是通配符，如**.js，所以转化为正则以后应该是/js$/这种样子的，所以就不考虑exclude和include同时存在的情况了，太无聊了
@@ -812,6 +815,23 @@ describe('_find(rPath, [include], [exclude])',function(){
                 path.normalize(__dirname+'/util/img/test.png')
             ].sort()
         );
+    });
+
+    it('include and exclude',function(){
+        file = _.find(__dirname+'/util/base64/', ['**.txt','**.gif'], ['**.txt','**.gif']);
+        expect(file.length).to.equal(0);
+
+        file = _.find(__dirname+'/util/base64/', ['**.txt','**.gif'], ['**.gif']);
+        expect(file.length).to.equal(1);
+
+        file = _.find(__dirname+'/util/base64/', ['**.txt','**.gif'], ['**.gif2']);
+        expect(file.length).to.equal(2);
+
+        file = _.find(__dirname+'/util/base64/', ['**.txt'], ['**.gif']);
+        expect(file.length).to.equal(1);
+        file = file[0];
+        file = path.normalize(file);
+        expect(file).to.equal(path.normalize(__dirname+'/util/base64/logo.txt'));
     });
 
 });

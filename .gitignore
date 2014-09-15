@@ -1,6 +1,7 @@
 /.idea
 node_modules/
-
+/test/ut/install
+/test/ut/file/target
 .DS_Store
 *.db
 *.bak

@@ -634,7 +634,7 @@ describe('compile(path, debug)', function () {
         var f1 = compile(root+'js/uri.js');
         var c = compile(f1).getContent();
         //包括注释和正常的uri，字符串中的uri，跨行的uri
-        expect(c).to.equal("'/js/inline_7725901.js';\"/js/inline_7725901.js\";\n\"/js/inline_7725901.js\";'/js/inline_7725901.js';\n//__uri(\"./inline.js\");\n/*\n* __uri(\"./inline.js\");\n* */\"/js/inline_7725901.js\";\nvar a = '__uri(\"./inline.js\")';\n'/js/inline_7725901.js';");
+        expect(c.replace(/\r/g,'')).to.equal("'/js/inline_7725901.js';\"/js/inline_7725901.js\";\n\"/js/inline_7725901.js\";'/js/inline_7725901.js';\n//__uri(\"./inline.js\");\n/*\n* __uri(\"./inline.js\");\n* */\"/js/inline_7725901.js\";\nvar a = '__uri(\"./inline.js\")';\n'/js/inline_7725901.js';");
 
     });
 

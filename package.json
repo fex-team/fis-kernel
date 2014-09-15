@@ -1,24 +1,32 @@
 {
-    "name" : "fis-kernel",
-    "description" : "fis kernel.",
-    "version" : "2.0.8",
-    "author" : "FIS Team <fis@baidu.com>",
-    "homepage" : "http://fis.baidu.com/",
-    "license": "MIT",
-    "keywords": [ "fis" ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/fis-dev/fis-kernel.git"
-    },
-    "engines" : {
-        "node" : ">= 0.8.0"
-    },
-    "main" : "fis-kernel.js",
-    "scripts" : {
-        "test" : "mocha test/ut --recursive"
-    },
-    "dependencies" : {
-        "tar"  : "0.1.17",
-        "iconv-lite" : "0.2.10"
-    }
+  "name": "fis-kernel",
+  "description": "fis kernel.",
+  "version": "2.0.8",
+  "author": "FIS Team <fis@baidu.com>",
+  "homepage": "http://fis.baidu.com/",
+  "license": "MIT",
+  "keywords": [
+    "fis"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fis-dev/fis-kernel.git"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "main": "fis-kernel.js",
+  "scripts": {
+    "test": "mocha test/ut"
+  },
+  "dependencies": {
+    "tar": "0.1.17",
+    "iconv-lite": "0.2.10"
+  },
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "fis-optimizer-clean-css": "0.0.12",
+    "fis-optimizer-uglify-js": "^0.1.2",
+    "fis-packager-map": "0.0.9"
+  }
 }
