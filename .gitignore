@@ -2,6 +2,7 @@
 node_modules/
 /test/ut/install
 /test/ut/file/target
+/test/ut/download
 .DS_Store
 *.db
 *.bak
