@@ -27,6 +27,7 @@
     "chai": "1.9.1",
     "fis-optimizer-clean-css": "0.0.12",
     "fis-optimizer-uglify-js": "0.1.2",
-    "fis-packager-map": "0.0.9"
+    "fis-packager-map": "0.0.9",
+    "mocha": "^2.0.1"
   }
 }
