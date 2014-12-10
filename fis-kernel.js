@@ -126,3 +126,29 @@ fis.info = fis.util.readJSON(__dirname + '/package.json');
 
 //kernel version
 fis.version = fis.info.version;
+
+fis.initPlugins = function(plugins) {
+    plugins = plugins || fis.config.get('modules.plugins', []);
+
+    plugins.forEach(function(plugin, index) {
+        var key = 'plugin.' + index;
+
+        if (typeof plugin === 'string') {
+            plugin = fis.require('plugin', plugin);
+            key = 'plugin.' + plugin;
+        }
+
+        var initFn = plugin && (plugin.init || plugin);
+
+        if (!initFn || typeof plugin !== 'function' ) {
+            fis.log.warning('invalid plugin [modules.' + key + ']');
+        }
+
+        var settings = fis.config.get('settings.' + key, {});
+        if(plugin.defaultOptions){
+            settings = fis.util.merge(plugin.defaultOptions, settings);
+        }
+
+        initFn(settings);
+    });
+};
