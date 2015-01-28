@@ -88,7 +88,9 @@ fis.require = function(){
             } catch (e){
                 fis.log.error('load plugin [' + pluginName + '] error : ' + e.message);
             }
-        } catch (e){}
+        } catch (e){
+            fis.log.error('load plugin [' + pluginName + '] config error : ' + e.message);
+        }
     }
     fis.log.error('unable to load plugin [' + names.join('] or [') + ']');
 };
