@@ -21,6 +21,8 @@
   },
   "dependencies": {
     "tar": "0.1.17",
+    "tar.gz":"0.1.1",
+    "unzip": "0.1.11",
     "iconv-lite": "0.2.10"
   },
   "devDependencies": {
