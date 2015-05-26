@@ -89,8 +89,9 @@ fis.require = function(){
                 fis.log.error('load plugin [' + pluginName + '] error : ' + e.message);
             }
         } catch (e){
-            // require.resolve 可能报错，不能中断程序
-            // fis.log.error('load plugin [' + pluginName + '] config error : ' + e.message);
+            if (e.code !== 'MODULE_NOT_FOUND') {
+                throw e;
+            }
         }
     }
     fis.log.error('unable to load plugin [' + names.join('] or [') + ']');
