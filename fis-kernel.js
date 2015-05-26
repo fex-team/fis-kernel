@@ -86,10 +86,11 @@ fis.require = function(){
             try {
                 return fis.require._cache[name] = require(pluginName);
             } catch (e){
-                fis.log.debug('load plugin [' + pluginName + '] error : ' + e.message);
+                fis.log.error('load plugin [' + pluginName + '] error : ' + e.message);
             }
         } catch (e){
-            fis.log.error('load plugin [' + pluginName + '] config error : ' + e.message);
+            // require.resolve 可能报错，不能中断程序
+            // fis.log.error('load plugin [' + pluginName + '] config error : ' + e.message);
         }
     }
     fis.log.error('unable to load plugin [' + names.join('] or [') + ']');
