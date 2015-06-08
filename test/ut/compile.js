@@ -931,5 +931,7 @@ describe('compile(path, debug)', function () {
         f1 = compile(f1);
         expect(f1.getContent()).to.equal('!function(){var r=1,a=7,f=0;0>r&&(f=-7);for(;a>f;f++)alert(f)}();');
     });
-
+  
+    it('image srcset support', function () {
+    });
 });
