@@ -542,6 +542,7 @@ describe('compile(path, debug)', function () {
     it('inline--js',function(){
         //清空前面的config参数
         config.init();
+        fis.project.setProjectRoot(__dirname);
         var f1 = _(__dirname, 'file/embed.js'),
             f2 = _(__dirname, '/e.js'),
             f3 = _(__dirname, 'file/embed/e2.js'),
