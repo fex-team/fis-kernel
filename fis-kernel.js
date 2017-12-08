@@ -5,6 +5,8 @@
 
 'use strict';
 
+var paths = require('path');
+var klawSync = require('klaw-sync');
 var last = Date.now();
 
 //oo
@@ -78,6 +80,7 @@ fis.require = function(){
     var name = Array.prototype.slice.call(arguments, 0).join('-');
     if(fis.require._cache.hasOwnProperty(name)) return fis.require._cache[name];
     var names = [];
+    var projectModulePath = void 0;
     for(var i = 0, len = fis.require.prefixes.length; i < len; i++){
         try {
             var pluginName = fis.require.prefixes[i] + '-' + name;
@@ -89,8 +92,22 @@ fis.require = function(){
                 fis.log.error('load plugin [' + pluginName + '] error : ' + e.message);
             }
         } catch (e){
-            if (e.code !== 'MODULE_NOT_FOUND') {
-                throw e;
+            try {
+                projectModulePath = klawSync(process.cwd(), {
+                    nofile:true,
+                    filter: function(item){
+                        return item.path.match(pluginName)
+                    }
+                });
+                projectModulePath = projectModulePath.length ? projectModulePath[0].path : void 0;
+                if(!projectModulePath)
+                    throw e;
+                path = require.resolve(projectModulePath);
+                return fis.require._cache[name] = require(projectModulePath);
+            } catch (e) {
+                if (e.code !== 'MODULE_NOT_FOUND') {
+                    throw e;
+                }
             }
         }
     }
