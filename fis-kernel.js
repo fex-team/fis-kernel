@@ -98,7 +98,10 @@ fis.require = function(){
                     filter: function(item){
                         return item.path.match(pluginName)
                     }
-                })[0].path;
+                });
+                projectModulePath = projectModulePath.length ? projectModulePath[0].path : void 0;
+                if(!projectModulePath)
+                    throw e;
                 path = require.resolve(projectModulePath);
                 return fis.require._cache[name] = require(projectModulePath);
             } catch (e) {
