@@ -1,7 +1,7 @@
 {
   "name": "fis-kernel",
   "description": "fis kernel.",
-  "version": "2.0.19",
+  "version": "2.0.20",
   "author": "FIS Team <fis@baidu.com>",
   "homepage": "http://fis.baidu.com/",
   "license": "MIT",
@@ -20,8 +20,9 @@
     "test": "mocha test/ut"
   },
   "dependencies": {
-    "tar": "2.2.1",
-    "iconv-lite": "0.2.10"
+    "iconv-lite": "0.2.10",
+    "klaw-sync": "^3.0.2",
+    "tar": "2.2.1"
   },
   "devDependencies": {
     "chai": "1.9.1",
